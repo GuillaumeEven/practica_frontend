@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output} from "@angular/core";
 import { CommonModule } from "@angular/common";
 
+
 @Component({
     selector: 'app-user-popup',
     templateUrl: './user-popup.component.html',
@@ -20,8 +21,11 @@ export class UserPopupComponent implements OnInit {
     }
 
     async onSave() {
-        this.cerrarPopUpOk.emit();
+        console.log('Boton Guardar pulsado');
+        const username = localStorage.getItem('nickUsuario');
+        const password = localStorage.getItem('contrasena');
     }
+
     onCancel() {
         this.cerrarPopUpCancel.emit();
 

@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
 import {RouterOutlet} from "@angular/router";
+import { LoginService } from "./core/services/login.service";
 
 @Component({
   selector: "app-root",
   styleUrls: ['./app.component.css'],
   templateUrl: "./app.component.html",
   imports: [
-    RouterOutlet,
+    RouterOutlet
   ],
+  providers: [LoginService],
   standalone: true,
 
 })
