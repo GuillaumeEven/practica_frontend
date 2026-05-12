@@ -1,5 +1,5 @@
 .user-list-container {
-  max-width: 600px;
+  max-width: 900px;
   margin: 30px auto;
 }
 .dialog-overlay {
@@ -36,7 +36,8 @@ body {
 
 
 table {
-  width: 100%;
+  max-width: 100%;
+  overflow-x: scroll;
 }
 
 table, th, tr, td {
@@ -56,6 +57,13 @@ td {
   text-align: center;
   color: #000;
   padding: .3rem;
+
+  img {
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
 }
 
 tr:nth-child(even) {background-color: #f7cecc;}

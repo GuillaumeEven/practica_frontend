@@ -7,12 +7,32 @@
 <div class="user-list-container">
     <h2>User List</h2>
         <table>
-        <tr><th>Nick</th><th>Name</th><th>Last</th><th>Admin</th></tr>
+        <tr>
+            <th>Gender</th>
+            <th>Username</th>
+            <th>Full Name</th>
+            <th>Creation</th>
+            <th>Age</th>
+            <th>Freakfast</th>
+            <th>Job Position</th>
+            <th>Main Address</th>
+            <th>Extra Addresses</th>
+        </tr>
         <tr *ngFor="let u of users">
+            <td class="user-gender-icon">
+                <img
+                    [src]="u.genderIcon"
+                    [alt]="u.genero?.nombre || 'genre'"
+                />
+            </td>
             <td>{{u.nickUsuario}}</td>
-            <td>{{u.nombre}}</td>
-            <td>{{u.primerApellido}} {{u.segundoApellido}}</td>
-            <td>{{u.admin ?? u['esAdmin']}}</td>
+            <td>{{u.primerApellido + ' ' + u.segundoApellido + ', ' + u.nombre}}</td>
+            <td>{{u.fechaHoraCreacionFormatted}}</td>
+            <td>{{u.age}}</td>
+            <td>{{u.horaDesayunoFormatted}}</td>
+            <td>{{u.puestoTrabajo?.nombre}}</td>
+            <td>{{u.direccionPrincipal}}</td>
+            <td>{{u.extraDirecciones}}</td>
         </tr>
         </table>
     <div>
