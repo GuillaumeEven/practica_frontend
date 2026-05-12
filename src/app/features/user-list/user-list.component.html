@@ -6,7 +6,15 @@
 
 <div class="user-list-container">
     <h2>User List</h2>
-    <!-- @TODO: Implement user list display here -->
+        <table>
+        <tr><th>Nick</th><th>Name</th><th>Last</th><th>Admin</th></tr>
+        <tr *ngFor="let u of users">
+            <td>{{u.nickUsuario}}</td>
+            <td>{{u.nombre}}</td>
+            <td>{{u.primerApellido}} {{u.segundoApellido}}</td>
+            <td>{{u.admin ?? u['esAdmin']}}</td>
+        </tr>
+        </table>
     <div>
         <button (click)="launchPopup()">Popup</button>
     </div>
