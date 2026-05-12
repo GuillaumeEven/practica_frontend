@@ -8,6 +8,7 @@
     <h2>User List</h2>
         <table>
         <tr>
+            <th></th>
             <th>Gender</th>
             <th>Username</th>
             <th>Full Name</th>
@@ -19,6 +20,11 @@
             <th>Extra Addresses</th>
         </tr>
         <tr *ngFor="let u of users">
+            <td>
+                <label>
+                    <input type="radio" name="selectedUser" [value]="u.id" [(ngModel)]="selectedUserId" />
+                </label>
+            </td>
             <td class="user-gender-icon">
                 <img
                     [src]="u.genderIcon"

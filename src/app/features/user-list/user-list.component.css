@@ -67,7 +67,7 @@ td {
 }
 
 tr:nth-child(even) {background-color: #f7cecc;}
-
+th:first-child {min-width: 40px;}
 .container-button {
   display: flex; /* alinear horizontalmente */
   gap: 10px;
