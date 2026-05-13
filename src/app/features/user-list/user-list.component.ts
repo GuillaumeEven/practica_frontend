@@ -40,43 +40,16 @@ export class UserListComponent implements OnInit {
     return this.users.find(u => u.id === this.selectedUserId);
   }
 
-
-  private genderIconFor(name?: string): string {
-    if (!name) return 'assets/images/Other.png';
-    const n = name.toLowerCase();
-    if (n.includes('hom')) return 'assets/images/Male.JPG';
-    if (n.includes('muj')) return 'assets/images/Female.JPG';
-    return 'assets/images/Other.png';
-  }
-
-  private formatFechaHora(iso?: string): string {
-    if (!iso) return '';
-    const d = new Date(iso);
-    const pad = (n: number) => n.toString().padStart(2, '0');
-    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-  }
-
-  private calculateAge(dob?: string | Date): number | null {
-    if (!dob) return null;
-    const b = typeof dob === 'string' ? new Date(dob) : dob;
-    if (isNaN(b.getTime())) return null;
-    const today = new Date();
-    let age = today.getFullYear() - b.getFullYear();
-    const m = today.getMonth() - b.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < b.getDate())) age--;
-    return age >= 0 ? age : 0;
-  }
-
-  private extractDireccionPrincipal(direcciones: any[]): string {
-    if (!direcciones || direcciones.length === 0) return '';
-    for (const d of direcciones) {
-      console.log('Direccion:', d.direccionPrincipal);
-      if (d.direccionPrincipal) {
-        return `${d.nombreCalle} ${d.numeroCalle}, ${d.ciudad}`;
-      }
+  private async refreshUsers() {
+    const nick = localStorage.getItem('nickUsuario');
+    const pass = localStorage.getItem('contrasena');
+    if (!nick || !pass) return;
+    const result = await this.userService.obtenerUsuarios(nick, pass);
+    if (Array.isArray(result)) {
+      this.users = (result as Usuario[]).map(u => toViewModel(u));
+    } else {
+      alert('Error al obtener usuarios: ' + (result.error?.message || 'Unknown error'));
     }
-    const d = direcciones[0];
-    return `${d.nombreCalle} ${d.numeroCalle}, ${d.ciudad}`;
   }
 
   ngOnInit(): void {
@@ -97,7 +70,6 @@ export class UserListComponent implements OnInit {
       }
       // Map domain users -> view-models for display
       this.users = (result as Usuario[]).map(u => toViewModel(u));
-      console.log(this.users);
     });
 
   }
@@ -115,13 +87,23 @@ export class UserListComponent implements OnInit {
     this.modoUpdPopup = 'LAUNCH';
   }
 
-  onUpdSave(updated?: Usuario) {
-    if (!updated) { this.modoUpdPopup = 'CLOSED'; return; }
-    // convert returned domain object to VM for display
-    const vm = toViewModel(updated);
-    const idx = this.users.findIndex(u => u.id === vm.id);
-    if (idx >= 0) this.users[idx] = { ...this.users[idx], ...vm };
-    else this.users.push(vm);
+  async onUpdSave(updated?: Usuario) {
+    if (!updated || typeof updated.id !== 'number') { this.modoUpdPopup = 'CLOSED'; return; }
+    const nick = localStorage.getItem('nickUsuario');
+    const pass = localStorage.getItem('contrasena');
+    if (!nick || !pass) {
+      alert('Error: Ningún credencial disponible en almacenamiento');
+      this.modoUpdPopup = 'CLOSED';
+      return;
+    }
+    const res = await this.userService.actualizarUsuario(updated, nick, pass);
+    if (res.error) {
+      console.log(res.error.error.message);
+      alert('Error al actualizar: ' + (res.error.error.message ?? res.error));
+      this.modoUpdPopup = 'CLOSED';
+      return;
+    }
+    await this.refreshUsers(); // recarga el estado del servidor
     this.modoUpdPopup = 'CLOSED';
   }
 
