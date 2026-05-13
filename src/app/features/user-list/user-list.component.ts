@@ -1,27 +1,45 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import {Router} from "@angular/router";
+import { Router } from '@angular/router';
 import { UserPopupComponent } from '../user-popup/user-popup.component';
 import { Usuario } from 'src/app/core/models/user.model';
 import { UserService } from 'src/app/core/services/user.service';
+import { FormsModule } from '@angular/forms';
+import { UpdatePopupComponent } from '../update-popup/update-popup.component';
+import { UsuarioVM, toViewModel } from 'src/app/core/services/user.mapper.service';
 
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.css'],
   standalone: true,
-  imports: [ CommonModule, UserPopupComponent ]
+  imports: [
+    CommonModule,
+    UserPopupComponent,
+    UpdatePopupComponent,
+    FormsModule
+  ]
 })
 export class UserListComponent implements OnInit {
+
   @Output() cerrarPopUpOk = new EventEmitter<void>();
   @Output() cerrarPopUpCancel = new EventEmitter<void>();
 
+  @Output() cerrarUpdPopUpOk = new EventEmitter<void>();
+  @Output() cerrarUpdPopUpCancel = new EventEmitter<void>();
+
   modoPopup: String = 'CLOSED';
+  modoUpdPopup: String = 'CLOSED';
+  users: UsuarioVM[] = [];
+  selectedUserId: number | null = null;
 
   constructor(private router: Router, private userService: UserService) {
   }
 
-  users: Usuario[] = [];
+  get selectedUser(): UsuarioVM | undefined {
+    return this.users.find(u => u.id === this.selectedUserId);
+  }
+
 
   private genderIconFor(name?: string): string {
     if (!name) return 'assets/images/Other.png';
@@ -35,7 +53,7 @@ export class UserListComponent implements OnInit {
     if (!iso) return '';
     const d = new Date(iso);
     const pad = (n: number) => n.toString().padStart(2, '0');
-    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}v ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
   }
 
   private calculateAge(dob?: string | Date): number | null {
@@ -77,18 +95,34 @@ export class UserListComponent implements OnInit {
         alert('Error al obtener usuarios: ' + result.error.message);
         return;
       }
-      this.users = result.map(u => ({
-        ...u,
-        genderIcon: this.genderIconFor(u.genero?.nombre),
-        fechaHoraCreacionFormatted: this.formatFechaHora(u.fechaHoraCreacion),
-        age: this.calculateAge(u.fechaNacimiento),
-        horaDesayunoFormatted: u.horaDesayuno ? u.horaDesayuno.slice(0,5) : '',
-        direccionPrincipal: this.extractDireccionPrincipal(u.direcciones),
-        extraDirecciones: u.direcciones && u.direcciones.length > 1 ? u.direcciones.length - 1 : 0
-      }));
+      // Map domain users -> view-models for display
+      this.users = (result as Usuario[]).map(u => toViewModel(u));
       console.log(this.users);
     });
 
+  }
+
+  onCerrarUpdPopUpOk() {
+    this.modoUpdPopup = 'CLOSED';
+  }
+
+  onCerrarUpdPopUpCancel() {
+    this.modoUpdPopup = 'CLOSED';
+  }
+
+  launchUpdPopup(userId: number) {
+    this.selectedUserId = userId;
+    this.modoUpdPopup = 'LAUNCH';
+  }
+
+  onUpdSave(updated?: Usuario) {
+    if (!updated) { this.modoUpdPopup = 'CLOSED'; return; }
+    // convert returned domain object to VM for display
+    const vm = toViewModel(updated);
+    const idx = this.users.findIndex(u => u.id === vm.id);
+    if (idx >= 0) this.users[idx] = { ...this.users[idx], ...vm };
+    else this.users.push(vm);
+    this.modoUpdPopup = 'CLOSED';
   }
 
   onCerrarPopUpOk() {

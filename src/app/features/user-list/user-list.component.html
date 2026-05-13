@@ -1,8 +1,17 @@
-
-<app-user-popup *ngIf="modoPopup !== 'CLOSED'"
-                (cerrarPopUpOk)="onCerrarPopUpOk()"
-                (cerrarPopUpCancel)="onCerrarPopUpCancel()"
-/>
+<app-user-popup
+    *ngIf="modoPopup !== 'CLOSED'"
+    (cerrarPopUpOk)="onCerrarPopUpOk()"
+    (cerrarPopUpCancel)="onCerrarPopUpCancel()">
+</app-user-popup>
+<update-user-popup
+    *ngIf="modoUpdPopup !== 'CLOSED'"
+    [user]="selectedUser"
+    (cerrarUpdPopUpOk)="onUpdSave($event)"
+    (cerrarUpdPopUpCancel)="onCerrarUpdPopUpCancel()">
+</update-user-popup>
+<div>
+    <button (click)="launchUpdPopup(selectedUserId)">Actualizar usuario</button>
+</div>
 
 <div class="user-list-container">
     <h2>User List</h2>
