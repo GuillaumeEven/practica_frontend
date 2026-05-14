@@ -60,4 +60,9 @@ button{
         background-color: var(--primary-dark);
         color: #fff;
     }
+
+    img{
+        height: 20px;
+        width: auto;
+    }
 }

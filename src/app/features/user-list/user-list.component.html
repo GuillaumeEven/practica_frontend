@@ -1,20 +1,28 @@
-<app-user-popup
-    *ngIf="modoPopup !== 'CLOSED'"
-    (cerrarPopUpOk)="onCerrarPopUpOk()"
-    (cerrarPopUpCancel)="onCerrarPopUpCancel()">
-</app-user-popup>
+
 <update-user-popup
     *ngIf="modoUpdPopup !== 'CLOSED'"
     [user]="selectedUser"
     (cerrarUpdPopUpOk)="onUpdSave($event)"
     (cerrarUpdPopUpCancel)="onCerrarUpdPopUpCancel()">
 </update-user-popup>
-<div>
-    <button (click)="launchUpdPopup(selectedUserId)">Actualizar usuario</button>
-</div>
 
-<div class="user-list-container">
-    <h2>User List</h2>
+<div class="user-list-page">
+
+    <div class="buttons-container">
+        <div>
+            <button (click)="launchCreatePopup()">Create</button>
+        </div>
+        <div>
+            <button (click)="launchUpdPopup(selectedUserId)">Update</button>
+        </div>
+        <div>
+            <button (click)="launchDeletePopup(selectedUserId)">
+                <img src="assets/images/DeleteIcon.JPG" alt="Delete" class="delete-icon" />
+            </button>
+        </div>
+    </div>
+    <div class="user-list-container">
+        <h2>User List</h2>
         <table>
         <tr>
             <th></th>
@@ -50,8 +58,5 @@
             <td>{{u.extraDirecciones}}</td>
         </tr>
         </table>
-    <div>
-        <button (click)="launchPopup()">Popup</button>
     </div>
-
 </div>

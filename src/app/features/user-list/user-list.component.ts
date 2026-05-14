@@ -25,11 +25,19 @@ export class UserListComponent implements OnInit {
   @Output() cerrarPopUpOk = new EventEmitter<void>();
   @Output() cerrarPopUpCancel = new EventEmitter<void>();
 
+  @Output() cerrarCreatePopUpOk = new EventEmitter<void>();
+  @Output() cerrarCreatePopUpCancel = new EventEmitter<void>();
+
   @Output() cerrarUpdPopUpOk = new EventEmitter<void>();
   @Output() cerrarUpdPopUpCancel = new EventEmitter<void>();
 
+  @Output() cerrarDeletePopUpOk = new EventEmitter<void>();
+  @Output() cerrarDeletePopUpCancel = new EventEmitter<void>();
+
   modoPopup: String = 'CLOSED';
   modoUpdPopup: String = 'CLOSED';
+  modoCreatePopup: String = 'CLOSED';
+  modoDeletePopup: String = 'CLOSED';
   users: UsuarioVM[] = [];
   selectedUserId: number | null = null;
 
@@ -74,6 +82,18 @@ export class UserListComponent implements OnInit {
 
   }
 
+  onCerrarCreatePopUpOk() {
+    this.modoCreatePopup = 'CLOSED';
+  }
+
+  onCerrarCreatePopUpCancel() {
+    this.modoCreatePopup = 'CLOSED';
+  }
+
+  launchCreatePopup() {
+    this.modoCreatePopup = 'LAUNCH';
+  }
+
   onCerrarUpdPopUpOk() {
     this.modoUpdPopup = 'CLOSED';
   }
@@ -85,6 +105,19 @@ export class UserListComponent implements OnInit {
   launchUpdPopup(userId: number) {
     this.selectedUserId = userId;
     this.modoUpdPopup = 'LAUNCH';
+  }
+
+  onCerrarDeletePopUpOk() {
+    this.modoDeletePopup = 'CLOSED';
+  }
+
+  onCerrarDeletePopUpCancel() {
+    this.modoDeletePopup = 'CLOSED';
+  }
+
+  launchDeletePopup(userId: number) {
+    this.selectedUserId = userId;
+    this.modoDeletePopup = 'LAUNCH';
   }
 
   async onUpdSave(updated?: Usuario) {
@@ -116,7 +149,6 @@ export class UserListComponent implements OnInit {
   }
 
   launchPopup() {
-
     this.modoPopup = 'LAUNCH';
   }
 
