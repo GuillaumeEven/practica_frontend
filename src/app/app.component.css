@@ -4,9 +4,7 @@ html, body {
 }
 
 .nz-content {
-    text-align: center;      /* centra el texto horizontalmente */
-    margin-top: 40px;        /* ajusta este valor según lo alto que lo quieras */
-}
+    text-align: center;      /* centra el texto horizontalmente */}
 
 h2 {
     display: inline-block;
