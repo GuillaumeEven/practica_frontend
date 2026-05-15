@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserPopupComponent } from '../user-popup/user-popup.component';
 import { Usuario } from 'src/app/core/models/user.model';
 import { UserService } from 'src/app/core/services/user.service';
 import { FormsModule } from '@angular/forms';
-import { UpdatePopupComponent } from '../update-popup/update-popup.component';
 import { UsuarioVM, toViewModel } from 'src/app/core/services/user.mapper.service';
+import { UserFormPopupComponent } from '../user-form-popup/user-form-popup.component';
 
 @Component({
   selector: 'app-user-list',
@@ -15,29 +14,14 @@ import { UsuarioVM, toViewModel } from 'src/app/core/services/user.mapper.servic
   standalone: true,
   imports: [
     CommonModule,
-    UserPopupComponent,
-    UpdatePopupComponent,
+    UserFormPopupComponent,
     FormsModule
   ]
 })
 export class UserListComponent implements OnInit {
 
-  @Output() cerrarPopUpOk = new EventEmitter<void>();
-  @Output() cerrarPopUpCancel = new EventEmitter<void>();
-
-  @Output() cerrarCreatePopUpOk = new EventEmitter<void>();
-  @Output() cerrarCreatePopUpCancel = new EventEmitter<void>();
-
-  @Output() cerrarUpdPopUpOk = new EventEmitter<void>();
-  @Output() cerrarUpdPopUpCancel = new EventEmitter<void>();
-
-  @Output() cerrarDeletePopUpOk = new EventEmitter<void>();
-  @Output() cerrarDeletePopUpCancel = new EventEmitter<void>();
-
-  modoPopup: String = 'CLOSED';
-  modoUpdPopup: String = 'CLOSED';
-  modoCreatePopup: String = 'CLOSED';
-  modoDeletePopup: String = 'CLOSED';
+  formPopupMode: 'create' | 'update' | 'closed' = 'closed';
+  modoDeletePopup: 'CLOSED' | 'LAUNCH' = 'CLOSED';
   users: UsuarioVM[] = [];
   selectedUserId: number | null = null;
 
@@ -82,74 +66,46 @@ export class UserListComponent implements OnInit {
 
   }
 
-  onCerrarCreatePopUpOk() {
-    this.modoCreatePopup = 'CLOSED';
+  launchCreatePopup(): void {
+    this.formPopupMode = 'create';
   }
 
-  onCerrarCreatePopUpCancel() {
-    this.modoCreatePopup = 'CLOSED';
-  }
-
-  launchCreatePopup() {
-    this.modoCreatePopup = 'LAUNCH';
-  }
-
-  onCerrarUpdPopUpOk() {
-    this.modoUpdPopup = 'CLOSED';
-  }
-
-  onCerrarUpdPopUpCancel() {
-    this.modoUpdPopup = 'CLOSED';
-  }
-
-  launchUpdPopup(userId: number) {
+  launchUpdPopup(userId: number | null): void {
+    if (userId === null) return;
     this.selectedUserId = userId;
-    this.modoUpdPopup = 'LAUNCH';
+    this.formPopupMode = 'update';
   }
 
-  onCerrarDeletePopUpOk() {
-    this.modoDeletePopup = 'CLOSED';
+  closeFormPopup(): void {
+    this.formPopupMode = 'closed';
   }
 
-  onCerrarDeletePopUpCancel() {
-    this.modoDeletePopup = 'CLOSED';
+  async onFormSaved(user: Usuario): Promise<void> {
+    const nick = localStorage.getItem('nickUsuario') ?? '';
+    const pass = localStorage.getItem('contrasena') ?? '';
+    const res = this.formPopupMode === 'create'
+      ? await this.userService.crearUsuario(user, nick, pass)
+      : await this.userService.actualizarUsuario(user, nick, pass);
+    if (res.error) {
+      alert('Error: ' + (res.error?.message ?? res.error));
+      return;
+    }
+    await this.refreshUsers();
+    this.formPopupMode = 'closed';
   }
 
-  launchDeletePopup(userId: number) {
+  launchDeletePopup(userId: number | null): void {
+    if (userId === null) return;
     this.selectedUserId = userId;
     this.modoDeletePopup = 'LAUNCH';
   }
 
-  async onUpdSave(updated?: Usuario) {
-    if (!updated || typeof updated.id !== 'number') { this.modoUpdPopup = 'CLOSED'; return; }
-    const nick = localStorage.getItem('nickUsuario');
-    const pass = localStorage.getItem('contrasena');
-    if (!nick || !pass) {
-      alert('Error: Ningún credencial disponible en almacenamiento');
-      this.modoUpdPopup = 'CLOSED';
-      return;
-    }
-    const res = await this.userService.actualizarUsuario(updated, nick, pass);
-    if (res.error) {
-      console.log(res.error.error.message);
-      alert('Error al actualizar: ' + (res.error.error.message ?? res.error));
-      this.modoUpdPopup = 'CLOSED';
-      return;
-    }
-    await this.refreshUsers(); // recarga el estado del servidor
-    this.modoUpdPopup = 'CLOSED';
+  onCerrarDeletePopUpOk(): void {
+    this.modoDeletePopup = 'CLOSED';
   }
 
-  onCerrarPopUpOk() {
-    this.modoPopup = 'CLOSED';
-  }
-
-  onCerrarPopUpCancel() {
-    this.modoPopup = 'CLOSED';
-  }
-
-  launchPopup() {
-    this.modoPopup = 'LAUNCH';
+  onCerrarDeletePopUpCancel(): void {
+    this.modoDeletePopup = 'CLOSED';
   }
 
   // @TODO: Implementar propiedades, atributos, métodos... necesarios para el funcionamiento del listado de usuarios

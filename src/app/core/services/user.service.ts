@@ -54,4 +54,62 @@ export class UserService {
     }
   }
 
+  async crearUsuario(user: Usuario, username: string, password: string): Promise<{ error: any, data?: Usuario }> {
+    try {
+      const params = new HttpParams()
+        .set(ConstUrls.NICK_USUARIO_PARAM, username)
+        .set(ConstUrls.PASS_USUARIO_PARAM, password);
+        console.log('Creating user with data:', user, 'and params:', params.toString()); // DEBUG
+        console.log('usuario a enviarr al backend:', JSON.stringify(user)); // DEBUG
+      const created = await firstValueFrom(
+        this.http.post<Usuario>(`${this.apiUrl}/usuarios`, user, { params })
+      );
+      return { error: null, data: created };
+    } catch (error) {
+      return { error, data: undefined };
+    }
+  }
+
+  async eliminarUsuario(id: number, username: string, password: string): Promise<{ error: any }> {
+    try {
+      const params = new HttpParams()
+        .set(ConstUrls.NICK_USUARIO_PARAM, username)
+        .set(ConstUrls.PASS_USUARIO_PARAM, password);
+      await firstValueFrom(
+        this.http.delete(`${this.apiUrl}/usuarios/${id}`, { params })
+      );
+      return { error: null };
+    } catch (error) {
+      return { error };
+    }
+  }
+
+  async obtenerGeneros(username: string, password: string): Promise<{ error: any, data?: any[] }> {
+    try {
+      const params = new HttpParams()
+        .set(ConstUrls.NICK_USUARIO_PARAM, username)
+        .set(ConstUrls.PASS_USUARIO_PARAM, password);
+      const data = await firstValueFrom(
+        this.http.get<any[]>(`${this.apiUrl}/usuarios/obtener-generos`, { params })
+      );
+      return { error: null, data };
+    } catch (error) {
+      return { error, data: [] };
+    }
+  }
+
+  async obtenerPuestosDeTrabajo(username: string, password: string): Promise<{ error: any, data?: any[] }> {
+    try {
+      const params = new HttpParams()
+        .set(ConstUrls.NICK_USUARIO_PARAM, username)
+        .set(ConstUrls.PASS_USUARIO_PARAM, password);
+      const data = await firstValueFrom(
+        this.http.get<any[]>(`${this.apiUrl}/usuarios/obtener-puestos`, { params })
+      );
+      return { error: null, data };
+    } catch (error) {
+      return { error, data: [] };
+    }
+  }
+
 }

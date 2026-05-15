@@ -82,17 +82,15 @@ export function genderIconFor(name?: string | null): string {
 export function extractDireccionPrincipal(direcciones?: any[] | null): string {
   if (!direcciones || !Array.isArray(direcciones) || direcciones.length === 0) return '';
   const pick = (d: any) => {
-    const street = d?.nombreCalle ?? d?.calle ?? '';
-    const number = d?.numeroCalle ?? d?.numero ?? '';
-    const city = d?.ciudad ?? d?.municipio ?? d?.localidad ?? '';
+    const street = d?.nombre_calle ?? d?.nombreCalle ?? d?.calle ?? '';
+    const number = d?.numero_calle ?? d?.numeroCalle ?? d?.numero ?? '';
     const parts: string[] = [];
     if (street) parts.push(street);
     if (number !== undefined && number !== null && number !== '') parts.push(String(number));
-    const addr = parts.join(' ');
-    return city ? `${addr}, ${city}` : addr;
+    return parts.join(', ');
   };
   for (const d of direcciones) {
-    if (d && (d.direccionPrincipal === true || d.direccionPrincipal === 'true')) {
+    if (d && (d.direccion_principal === true || d.direccionPrincipal === true)) {
       const res = pick(d);
       if (res) return res;
     }
@@ -108,26 +106,26 @@ export function extractDireccionPrincipal(direcciones?: any[] | null): string {
  */
 export function toViewModel(u: Usuario): UsuarioVM {
   if (!u) return {};
-  const fechaNacimiento = u.fechaNacimiento ? formatDateOnly(u.fechaNacimiento) : '';
-  const fechaHoraCreacion = u.fechaHoraCreacion ? formatDateTime(u.fechaHoraCreacion) : '';
+  const fechaNacimiento = u.fecha_nacimiento ? formatDateOnly(u.fecha_nacimiento) : '';
+  const fechaHoraCreacion = u.fecha_hora_creacion ? formatDateTime(u.fecha_hora_creacion) : '';
   return {
     id: u.id ?? null,
-    nickUsuario: u.nickUsuario ?? null,
+    nickUsuario: u.nick_usuario ?? null,
     nombre: u.nombre ?? null,
     contrasena: u.contrasena ?? null,
     fechaNacimiento,
     fechaHoraCreacion,
     genero: u.genero ?? null,
-    primerApellido: u.primerApellido ?? null,
-    segundoApellido: u.segundoApellido ?? null,
-    horaDesayuno: u.horaDesayuno ?? null,
-    horaDesayunoFormatted: u.horaDesayuno ? (u.horaDesayuno.slice ? u.horaDesayuno.slice(0, 5) : String(u.horaDesayuno)) : '',
-    puestoTrabajo: u.puestoTrabajo ?? null,
+    primerApellido: u.primer_apellido ?? null,
+    segundoApellido: u.segundo_apellido ?? null,
+    horaDesayuno: u.hora_desayuno ?? null,
+    horaDesayunoFormatted: u.hora_desayuno ? (u.hora_desayuno.slice ? u.hora_desayuno.slice(0, 5) : String(u.hora_desayuno)) : '',
+    puestoTrabajo: u.puesto_trabajo ?? null,
     admin: u.admin ?? false,
     direcciones: u.direcciones ?? null,
 
     // computed
-    age: calculateAge(u.fechaNacimiento),
+    age: calculateAge(u.fecha_nacimiento),
     genderIcon: genderIconFor(u.genero?.nombre),
     fechaHoraCreacionFormatted: fechaHoraCreacion,
     direccionPrincipal: extractDireccionPrincipal(u.direcciones),
@@ -140,26 +138,24 @@ export function toViewModel(u: Usuario): UsuarioVM {
  * Build domain object explicitly (avoid leaking VM-only props).
  */
 export function toDomain(vm: UsuarioVM): Usuario {
-  // Defensive conversions
   const fechaN = vm.fechaNacimiento ? toDate(vm.fechaNacimiento) : null;
   const fechaCre = vm.fechaHoraCreacion ? toDate(vm.fechaHoraCreacion) : new Date();
-  // Build puesto: ensure id is a number (use 0 as default if null)
   const puesto: PuestoDeTrabajo = vm.puestoTrabajo
     ? { id: vm.puestoTrabajo.id != null ? Number(vm.puestoTrabajo.id) : 0, nombre: vm.puestoTrabajo.nombre ?? '' }
     : { id: 0, nombre: '' };
 
   return {
     id: vm.id ?? null,
-    nickUsuario: vm.nickUsuario ?? null,
+    nick_usuario: vm.nickUsuario ?? null,
     nombre: vm.nombre ?? null,
     contrasena: vm.contrasena ?? null,
-    fechaHoraCreacion: fechaCre,
+    fecha_hora_creacion: fechaCre,
     genero: vm.genero ?? { id: null, nombre: null },
-    primerApellido: vm.primerApellido ?? null,
-    segundoApellido: vm.segundoApellido ?? null,
-    fechaNacimiento: fechaN,
-    horaDesayuno: vm.horaDesayunoFormatted ?? vm.horaDesayuno ?? null,
-    puestoTrabajo: puesto,
+    primer_apellido: vm.primerApellido ?? null,
+    segundo_apellido: vm.segundoApellido ?? null,
+    fecha_nacimiento: fechaN,
+    hora_desayuno: vm.horaDesayunoFormatted ?? vm.horaDesayuno ?? null,
+    puesto_trabajo: puesto,
     admin: vm.admin ?? false,
     direcciones: vm.direcciones ?? null
   } as Usuario;

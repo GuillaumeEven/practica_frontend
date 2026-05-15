@@ -1,10 +1,11 @@
 
-<update-user-popup
-    *ngIf="modoUpdPopup !== 'CLOSED'"
-    [user]="selectedUser"
-    (cerrarUpdPopUpOk)="onUpdSave($event)"
-    (cerrarUpdPopUpCancel)="onCerrarUpdPopUpCancel()">
-</update-user-popup>
+<app-user-form-popup
+    *ngIf="formPopupMode !== 'closed'"
+    [mode]="formPopupMode"
+    [user]="formPopupMode === 'update' ? selectedUser : undefined"
+    (saved)="onFormSaved($event)"
+    (cancelled)="closeFormPopup()">
+</app-user-form-popup>
 
 <div class="user-list-page">
     <div class="buttons-container">

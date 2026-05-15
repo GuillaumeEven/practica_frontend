@@ -1,0 +1,106 @@
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 100;
+}
+
+.dialog-box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 24px;
+  z-index: 101;
+  min-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 4px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-field span {
+  font-size: 12px;
+  color: #666;
+}
+
+.form-field input[disabled] {
+  background: #f0f0f0;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.addresses-section {
+  border-top: 1px solid #ddd;
+  padding-top: 12px;
+  margin-top: 8px;
+}
+
+.addresses-section h3 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+}
+
+.addresses-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.addresses-table-wrapper {
+  max-height: 160px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+}
+
+.addresses-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.addresses-table th,
+.addresses-table td {
+  border: 1px solid #ddd;
+  padding: 4px 8px;
+  text-align: left;
+}
+
+.addresses-table thead {
+  background: #f5f5f5;
+  position: sticky;
+  top: 0;
+}
+
+.addresses-table tr.editing {
+  background: #fffbe6;
+}
+
+.addresses-table input[type="text"],
+.addresses-table input[type="number"] {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #aaa;
+  padding: 2px 4px;
+}

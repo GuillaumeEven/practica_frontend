@@ -1,0 +1,147 @@
+<div class="dialog-overlay"></div>
+<div class="dialog-box">
+  <div class="dialog-title">
+    <h2>{{ title }}</h2>
+  </div>
+
+  <form #f="ngForm" (ngSubmit)="onSave()">
+    <div class="form-grid">
+
+    <!-- Solo lectura -->
+    <label class="form-field">
+        <span>Creation Date</span>
+        <input name="fechaHoraCreacion" [(ngModel)]="model.fechaHoraCreacion" disabled />
+    </label>
+
+    <!-- Editables -->
+    <label class="form-field">
+        <span>Username</span>
+        <input name="nickUsuario" [(ngModel)]="model.nickUsuario" />
+    </label>
+
+    <label class="form-field">
+        <span>Password</span>
+        <input type="password" name="contrasena" [(ngModel)]="model.contrasena" />
+    </label>
+
+    <label class="form-field">
+        <span>First Name</span>
+        <input name="nombre" [(ngModel)]="model.nombre" />
+    </label>
+
+    <label class="form-field">
+        <span>First Surname</span>
+        <input name="primerApellido" [(ngModel)]="model.primerApellido" />
+    </label>
+
+    <label class="form-field">
+        <span>Second Surname</span>
+        <input name="segundoApellido" [(ngModel)]="model.segundoApellido" />
+    </label>
+
+    <label class="form-field">
+        <span>Birth Date</span>
+        <input type="date" name="fechaNacimiento" [(ngModel)]="model.fechaNacimiento" />
+    </label>
+
+    <label class="form-field">
+        <span>Breakfast Time</span>
+        <input type="time" name="horaDesayuno" [(ngModel)]="model.horaDesayuno" />
+    </label>
+
+    <label class="form-field">
+        <span>Gender</span>
+        <select name="genero" [(ngModel)]="model.genero" [compareWith]="compareById">
+            <option [ngValue]="null">-- Select --</option>
+            <option *ngFor="let g of generos" [ngValue]="g">{{ g.nombre }}</option>
+        </select>
+    </label>
+
+    <label class="form-field">
+        <span>Job Position</span>
+        <select name="puestoTrabajo" [(ngModel)]="model.puestoTrabajo" [compareWith]="compareById">
+            <option [ngValue]="null">-- Select --</option>
+            <option *ngFor="let p of puestosDeTrabajo" [ngValue]="p">{{ p.nombre }}</option>
+        </select>
+    </label>
+
+    <label class="form-field form-field--checkbox">
+        <span>Admin</span>
+        <input type="checkbox" name="admin" [(ngModel)]="model.admin" />
+    </label>
+
+    </div>
+
+    <!-- Sección Direcciones -->
+    <section class="addresses-section">
+    <h3>Addresses</h3>
+
+    <div class="addresses-toolbar">
+        <button type="button" (click)="onAddAddress()">Create</button>
+        <button type="button" (click)="onEditAddress()" [disabled]="selectedAddressIdx === null">Edit</button>
+        <button type="button" (click)="onDeleteAddress()" [disabled]="selectedAddressIdx === null">
+        <img src="assets/images/DeleteIcon.JPG" alt="Delete" style="height:16px" />
+        </button>
+    </div>
+
+    <div class="addresses-table-wrapper">
+        <table class="addresses-table">
+        <thead>
+            <tr>
+            <th>Sel</th>
+            <th>Main</th>
+            <th>Street Name</th>
+            <th>Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let row of addressRows; let i = index"
+                [class.editing]="row.isEditing">
+
+            <!-- Radio selección de fila -->
+            <td>
+                <input type="radio" name="selectedAddr"
+                    [value]="i"
+                    [(ngModel)]="selectedAddressIdx" />
+            </td>
+
+            <!-- Radio direccion principal -->
+            <td>
+                <input type="radio" name="direccionPrincipal"
+                    [value]="i"
+                    [checked]="row.direccionPrincipal"
+                    (change)="onSetMain(i)" />
+            </td>
+
+            <!-- Nombre de calle -->
+            <td>
+                <span *ngIf="!row.isEditing">{{ row.nombreCalle }}</span>
+                <input *ngIf="row.isEditing"
+                    [(ngModel)]="row.nombreCalle"
+                    [name]="'nombreCalle_' + i" />
+            </td>
+
+            <!-- Número -->
+            <td>
+                <span *ngIf="!row.isEditing">{{ row.numeroCalle ?? '-' }}</span>
+                <input *ngIf="row.isEditing"
+                    type="text"
+                    [(ngModel)]="row.numeroCalle"
+                    [name]="'numeroCalle_' + i" />
+            </td>
+            </tr>
+
+            <tr *ngIf="addressRows.length === 0">
+            <td colspan="4" style="text-align:center; color:#999">No addresses</td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+    </section>
+
+    <div class="dialog-actions">
+      <button type="submit">{{ saveLabel }}</button>
+      <button type="button" (click)="onCancel()">Cancel</button>
+    </div>
+  </form>
+</div>

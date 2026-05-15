@@ -37,7 +37,7 @@ export const headers = new HttpHeaders({
 
 export function loadCredentials(): HttpParams {
     return new HttpParams()
-        .set(ConstUrls.NICK_USUARIO_PARAM, obtenerUsuarioLogado().nickUsuario)
+        .set(ConstUrls.NICK_USUARIO_PARAM, obtenerUsuarioLogado().nick_usuario)
         .set(ConstUrls.PASS_USUARIO_PARAM, obtenerUsuarioLogado().contrasena);
 }
 
