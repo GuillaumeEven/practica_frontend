@@ -149,6 +149,7 @@ export interface UsuarioRequest {
   es_admin?: boolean | null;
   puesto_trabajo_id?: number | null;
   direcciones?: {
+    id?: number | null;
     nombre_calle: string;
     numero_calle?: string | null;
     direccion_principal: boolean;
@@ -160,6 +161,7 @@ export interface UsuarioRequest {
  * Map view-model `UsuarioVM` -> API request body `UsuarioRequest`.
  */
 export function toRequest(vm: UsuarioVM): UsuarioRequest {
+  const dirs = (vm.direcciones ?? []) as any[];
   return {
     nick_usuario: vm.nickUsuario ?? null,
     contrasena: vm.contrasena ?? null,
@@ -171,10 +173,12 @@ export function toRequest(vm: UsuarioVM): UsuarioRequest {
     hora_desayuno: vm.horaDesayunoFormatted ?? vm.horaDesayuno ?? null,
     es_admin: vm.admin ?? false,
     puesto_trabajo_id: vm.puestoTrabajo?.id ?? null,
-    direcciones: (vm.direcciones ?? []).map(d => ({
-      nombre_calle: d.nombre_calle ?? '',
-      numero_calle: d.numero_calle ?? null,
-      direccion_principal: d.direccion_principal ?? false,
+    direcciones: dirs.map(d => ({
+      id: d?.id ?? null,
+      nombre_calle: d?.nombre_calle ?? '',
+      numero_calle: d?.numero_calle ?? null,
+      direccion_principal: d?.direccion_principal ?? false,
+      usuario_id: vm.id ?? null
     }))
   };
 }

@@ -175,7 +175,7 @@ export class UserFormPopupComponent implements OnInit, OnChanges {
     const vm: UsuarioVM = {
       ...this.model,
       direcciones: this.addressRows.map(row => ({
-        id: row.id,
+        id: row.id ?? null,
         nombre_calle: row.nombreCalle,
         numero_calle: row.numeroCalle,
         direccion_principal: row.direccionPrincipal

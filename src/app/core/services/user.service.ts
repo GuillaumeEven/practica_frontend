@@ -41,7 +41,7 @@ export class UserService {
       const params = new HttpParams()
         .set(ConstUrls.NICK_USUARIO_PARAM, username)
         .set(ConstUrls.PASS_USUARIO_PARAM, password);
-
+      console.log('Updating user with ID:', id, 'Data:', user);
       const updated = await firstValueFrom(
         this.http.put<Usuario>(
           `${this.apiUrl}/usuarios/${id}`,
