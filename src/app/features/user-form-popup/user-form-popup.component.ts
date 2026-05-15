@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Usuario, usuarioInicial } from 'src/app/core/models/user.model';
-import { UsuarioVM, toDomain } from 'src/app/core/services/user.mapper.service';
+import { UsuarioVM, UsuarioRequest, toRequest } from 'src/app/core/services/user.mapper.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { PuestoDeTrabajo } from 'src/app/core/models/puestodetrabajo.model';
 import { Genero } from 'src/app/core/models/genero.model';
@@ -40,7 +39,7 @@ export class UserFormPopupComponent implements OnInit, OnChanges {
   /** Solo se pasa en modo 'update' */
   @Input() user?: UsuarioVM;
 
-  @Output() saved = new EventEmitter<Usuario>();
+  @Output() saved = new EventEmitter<UsuarioRequest>();
   @Output() cancelled = new EventEmitter<void>();
 
   // Modelo interno del formulario
@@ -172,15 +171,17 @@ export class UserFormPopupComponent implements OnInit, OnChanges {
   }
 
   onSave(): void {
-    const domain = toDomain(this.model as UsuarioVM);
-    // Convertir las filas del UI (camelCase) → modelo de dominio (snake_case)
-    domain.direcciones = this.addressRows.map(row => ({
-      id: row.id,
-      nombre_calle: row.nombreCalle,
-      numero_calle: row.numeroCalle,
-      direccion_principal: row.direccionPrincipal
-    } as Direccion));
-    this.saved.emit(domain);
+    // Merge address rows (camelCase UI) into the VM before building the request
+    const vm: UsuarioVM = {
+      ...this.model,
+      direcciones: this.addressRows.map(row => ({
+        id: row.id,
+        nombre_calle: row.nombreCalle,
+        numero_calle: row.numeroCalle,
+        direccion_principal: row.direccionPrincipal
+      } as any))
+    };
+    this.saved.emit(toRequest(vm));
   }
 
   onCancel(): void {

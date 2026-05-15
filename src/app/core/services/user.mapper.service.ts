@@ -134,6 +134,52 @@ export function toViewModel(u: Usuario): UsuarioVM {
 }
 
 /**
+ * Request DTO matching the API's POST /usuarios and PUT /usuarios/:id body.
+ * Uses flat IDs (genero_id, puesto_trabajo_id) and es_admin instead of nested objects.
+ */
+export interface UsuarioRequest {
+  nick_usuario?: string | null;
+  contrasena?: string | null;
+  genero_id?: number | null;
+  nombre?: string | null;
+  primer_apellido?: string | null;
+  segundo_apellido?: string | null;
+  fecha_nacimiento?: string | null;
+  hora_desayuno?: string | null;
+  es_admin?: boolean | null;
+  puesto_trabajo_id?: number | null;
+  direcciones?: {
+    nombre_calle: string;
+    numero_calle?: string | null;
+    direccion_principal: boolean;
+    usuario_id?: number | null;
+  }[];
+}
+
+/**
+ * Map view-model `UsuarioVM` -> API request body `UsuarioRequest`.
+ */
+export function toRequest(vm: UsuarioVM): UsuarioRequest {
+  return {
+    nick_usuario: vm.nickUsuario ?? null,
+    contrasena: vm.contrasena ?? null,
+    genero_id: vm.genero?.id ?? null,
+    nombre: vm.nombre ?? null,
+    primer_apellido: vm.primerApellido ?? null,
+    segundo_apellido: vm.segundoApellido ?? null,
+    fecha_nacimiento: vm.fechaNacimiento ?? null,
+    hora_desayuno: vm.horaDesayunoFormatted ?? vm.horaDesayuno ?? null,
+    es_admin: vm.admin ?? false,
+    puesto_trabajo_id: vm.puestoTrabajo?.id ?? null,
+    direcciones: (vm.direcciones ?? []).map(d => ({
+      nombre_calle: d.nombre_calle ?? '',
+      numero_calle: d.numero_calle ?? null,
+      direccion_principal: d.direccion_principal ?? false,
+    }))
+  };
+}
+
+/**
  * Map view-model `UsuarioVM` -> domain `Usuario`.
  * Build domain object explicitly (avoid leaking VM-only props).
  */

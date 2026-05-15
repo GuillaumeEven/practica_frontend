@@ -1,19 +1,19 @@
 [
   {
     "id": 1,
-    "nickUsuario": "juan",
+    "nick_usuario": "juan",
     "contrasena": "1234",
-    "fechaHoraCreacion": "2025-05-14T20:06:17",
+    "fecha_hora_creacion": "2025-05-14T20:06:17",
     "genero": {
       "id": 1,
       "nombre": "masculino"
     },
     "nombre": "Juan Antonio",
-    "primerApellido": "Pérez",
-    "segundoApellido": null,
-    "fechaNacimiento": "1990-06-15",
-    "horaDesayuno": "08:00:00",
-    "puestoTrabajo": {
+    "primer_apellido": "Pérez",
+    "segundo_apellido": null,
+    "fecha_nacimiento": "1990-06-15",
+    "hora_desayuno": "08:00:00",
+    "puesto_trabajo": {
       "id": 1,
       "nombre": "Desarrollador"
     },
@@ -21,19 +21,19 @@
   },
   {
     "id": 2,
-    "nickUsuario": "pedro",
+    "nick_usuario": "pedro",
     "contrasena": "4567",
-    "fechaHoraCreacion": "2025-05-14T18:07:33",
+    "fecha_hora_creacion": "2025-05-14T18:07:33",
     "genero": {
       "id": 1,
       "nombre": "masculino"
     },
     "nombre": "Pedro Luis",
-    "primerApellido": "Sanchez",
-    "segundoApellido": "Segundo",
-    "fechaNacimiento": "2025-05-14",
-    "horaDesayuno": "13:14:56",
-    "puestoTrabajo": {
+    "primer_apellido": "Sanchez",
+    "segundo_apellido": "Segundo",
+    "fecha_nacimiento": "2025-05-14",
+    "hora_desayuno": "13:14:56",
+    "puesto_trabajo": {
       "id": 1,
       "nombre": "Desarrollador"
     },
@@ -41,19 +41,19 @@
   },
   {
     "id": 3,
-    "nickUsuario": "luisa",
+    "nick_usuario": "luisa",
     "contrasena": "8901",
-    "fechaHoraCreacion": "2025-05-14T18:07:33",
+    "fecha_hora_creacion": "2025-05-14T18:07:33",
     "genero": {
       "id": 2,
       "nombre": "femenino"
     },
     "nombre": "Luisa Alfonsina",
-    "primerApellido": "Garcia",
-    "segundoApellido": "Ramirez",
-    "fechaNacimiento": "2025-05-14",
-    "horaDesayuno": "13:14:56",
-    "puestoTrabajo": {
+    "primer_apellido": "Garcia",
+    "segundo_apellido": "Ramirez",
+    "fecha_nacimiento": "2025-05-14",
+    "hora_desayuno": "13:14:56",
+    "puesto_trabajo": {
       "id": 4,
       "nombre": "Carpintera"
     },

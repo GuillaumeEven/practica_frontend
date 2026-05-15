@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import { Usuario } from '../models/user.model';
+import { UsuarioRequest } from './user.mapper.service';
 import to from "./utils.service";
 import { firstValueFrom } from 'rxjs';
 import ConstUrls from 'src/app/shared/contants/const-urls';
@@ -35,7 +36,7 @@ export class UserService {
     )
   }
 
-  async actualizarUsuario(user: Usuario, username: string, password: string): Promise<{ error: any, data?: Usuario }> {
+  async actualizarUsuario(id: number, user: UsuarioRequest, username: string, password: string): Promise<{ error: any, data?: Usuario }> {
     try {
       const params = new HttpParams()
         .set(ConstUrls.NICK_USUARIO_PARAM, username)
@@ -43,9 +44,9 @@ export class UserService {
 
       const updated = await firstValueFrom(
         this.http.put<Usuario>(
-          `${this.apiUrl}/usuarios/${user.id}`,
-          user, // body
-          { params } // options
+          `${this.apiUrl}/usuarios/${id}`,
+          user,
+          { params }
         )
       );
       return { error: null, data: updated };
@@ -54,13 +55,11 @@ export class UserService {
     }
   }
 
-  async crearUsuario(user: Usuario, username: string, password: string): Promise<{ error: any, data?: Usuario }> {
+  async crearUsuario(user: UsuarioRequest, username: string, password: string): Promise<{ error: any, data?: Usuario }> {
     try {
       const params = new HttpParams()
         .set(ConstUrls.NICK_USUARIO_PARAM, username)
         .set(ConstUrls.PASS_USUARIO_PARAM, password);
-        console.log('Creating user with data:', user, 'and params:', params.toString()); // DEBUG
-        console.log('usuario a enviarr al backend:', JSON.stringify(user)); // DEBUG
       const created = await firstValueFrom(
         this.http.post<Usuario>(`${this.apiUrl}/usuarios`, user, { params })
       );

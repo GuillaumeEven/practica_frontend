@@ -17,7 +17,7 @@ export class LoginService {
     return await to(
       this.http.post<Usuario>(
         `${this.apiUrl}/usuarios/iniciar-sesion`,
-        {'nickUsuario': username, 'contrasena': password }).toPromise()
+        {'nick_usuario': username, 'contrasena': password }).toPromise()
     );
   }
 }

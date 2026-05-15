@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Usuario } from 'src/app/core/models/user.model';
+import { UsuarioVM, UsuarioRequest, toViewModel } from 'src/app/core/services/user.mapper.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { FormsModule } from '@angular/forms';
-import { UsuarioVM, toViewModel } from 'src/app/core/services/user.mapper.service';
 import { UserFormPopupComponent } from '../user-form-popup/user-form-popup.component';
 
 @Component({
@@ -80,12 +80,12 @@ export class UserListComponent implements OnInit {
     this.formPopupMode = 'closed';
   }
 
-  async onFormSaved(user: Usuario): Promise<void> {
+  async onFormSaved(user: UsuarioRequest): Promise<void> {
     const nick = localStorage.getItem('nickUsuario') ?? '';
     const pass = localStorage.getItem('contrasena') ?? '';
     const res = this.formPopupMode === 'create'
       ? await this.userService.crearUsuario(user, nick, pass)
-      : await this.userService.actualizarUsuario(user, nick, pass);
+      : await this.userService.actualizarUsuario(this.selectedUserId!, user, nick, pass);
     if (res.error) {
       alert('Error: ' + (res.error?.message ?? res.error));
       return;

@@ -3,19 +3,19 @@
   "exception": null,
   "data": {
     "id": 1,
-    "nickUsuario": "juan",
+    "nick_usuario": "juan",
     "contrasena": "1234",
-    "fechaHoraCreacion": "2025-05-14T20:06:17",
+    "fecha_hora_creacion": "2025-05-14T20:06:17",
     "genero": {
       "id": 1,
       "nombre": "masculino"
     },
     "nombre": "Juan Antonio",
-    "primerApellido": "Pérez",
-    "segundoApellido": null,
-    "fechaNacimiento": "1990-06-15",
-    "horaDesayuno": "08:00:00",
-    "puestoTrabajo": {
+    "primer_apellido": "Pérez",
+    "segundo_apellido": null,
+    "fecha_nacimiento": "1990-06-15",
+    "hora_desayuno": "08:00:00",
+    "puesto_trabajo": {
       "id": 1,
       "nombre": "Desarrollador"
     },
