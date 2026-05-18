@@ -3,13 +3,8 @@ import ConstUrls from "../../shared/contants/const-urls";
 import ConstLocalStorage from "../../shared/contants/const-local-storage";
 import {Usuario} from "../models/user.model";
 
-export default async function to(promise: Promise<any>) {
-    try {
-        const data = await promise
-        return data
-    } catch (err) {
-        return [err]
-    }
+export function extractApiErrorMessage(err: any): string {
+  return err?.error?.message ?? err?.message ?? 'Error desconocido';
 }
 
 export function isOkResponse(response) {

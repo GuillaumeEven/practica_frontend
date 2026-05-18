@@ -37,10 +37,10 @@ export class UserListComponent implements OnInit {
     const pass = localStorage.getItem('contrasena');
     if (!nick || !pass) return;
     const result = await this.userService.obtenerUsuarios(nick, pass);
-    if (Array.isArray(result)) {
-      this.users = (result as Usuario[]).map(u => toViewModel(u));
+    if (result.error) {
+      alert('Error al obtener usuarios: ' + result.error.message);
     } else {
-      alert('Error al obtener usuarios: ' + (result.error?.message || 'Unknown error'));
+      this.users = (result.data ?? []).map(u => toViewModel(u));
     }
   }
 
@@ -58,15 +58,10 @@ export class UserListComponent implements OnInit {
     this.userService.obtenerUsuarios(nick, pass).then((result) => {
       if (result.error) {
         alert('Error al obtener usuarios: ' + result.error.message);
-        return;
-      }
-      // Map domain users -> view-models for display
-      this.users = (result as Usuario[]).map(u => toViewModel(u));
-      if (this.users.length > 0) {
-        this.selectedUserId = this.users[0].id ?? null;
+      } else if (result.data) {
+        this.users = result.data.map(u => toViewModel(u));
       }
     });
-
   }
 
   launchCreatePopup(): void {

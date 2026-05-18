@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import { Usuario } from '../models/user.model';
 import { UsuarioRequest } from './user.mapper.service';
-import to from "./utils.service";
 import { firstValueFrom } from 'rxjs';
 import ConstUrls from 'src/app/shared/contants/const-urls';
+import { extractApiErrorMessage } from './utils.service';
 
 
 @Injectable({
@@ -18,22 +18,24 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   async obtenerUsuarioPorId(id: number) {
-    return await to(
-        this.http
-            .get<Usuario>('/assets/mocks/user.json')
-            .toPromise()
-    )
+    try {
+      const data = await firstValueFrom(this.http.get<Usuario>(`${this.apiUrl}/usuarios/${id}`));
+      return { error: null, data };
+    } catch (err:any) {
+      return { error: { raw: err, message: extractApiErrorMessage(err) } };
+    }
   }
 
   async obtenerUsuarios(username: string, password: string) {
-
-    return await to(
-        this.http
-            .get<Usuario[]>(
-              `${this.apiUrl}/usuarios`,
-              { params: { nickUsuario: username, contrasena: password } })
-            .toPromise()
-    )
+    try {
+      const params = new HttpParams()
+        .set(ConstUrls.NICK_USUARIO_PARAM, username)
+        .set(ConstUrls.PASS_USUARIO_PARAM, password);
+      const data = await firstValueFrom(this.http.get<Usuario[]>(`${this.apiUrl}/usuarios`, { params }));
+      return { error: null, data };
+    } catch (err:any) {
+      return { error: { raw: err, message: extractApiErrorMessage(err) } };
+    }
   }
 
   async actualizarUsuario(id: number, user: UsuarioRequest, username: string, password: string): Promise<{ error: any, data?: Usuario }> {
@@ -50,8 +52,8 @@ export class UserService {
         )
       );
       return { error: null, data: updated };
-    } catch (error) {
-      return { error, data: undefined };
+    } catch (err:any) {
+      return { error: { raw: err, message: extractApiErrorMessage(err) }, data: undefined };
     }
   }
 
@@ -64,8 +66,8 @@ export class UserService {
         this.http.post<Usuario>(`${this.apiUrl}/usuarios`, user, { params })
       );
       return { error: null, data: created };
-    } catch (error) {
-      return { error, data: undefined };
+    } catch (err:any) {
+      return { error: { raw: err, message: extractApiErrorMessage(err) }, data: undefined };
     }
   }
 
@@ -78,8 +80,8 @@ export class UserService {
         this.http.delete(`${this.apiUrl}/usuarios/${id}`, { params })
       );
       return { error: null };
-    } catch (error) {
-      return { error };
+    } catch (err:any) {
+      return { error: { raw: err, message: extractApiErrorMessage(err) } };
     }
   }
 
@@ -92,8 +94,8 @@ export class UserService {
         this.http.get<any[]>(`${this.apiUrl}/usuarios/obtener-generos`, { params })
       );
       return { error: null, data };
-    } catch (error) {
-      return { error, data: [] };
+    } catch (err:any) {
+      return { error: { raw: err, message: extractApiErrorMessage(err) }, data: [] };
     }
   }
 
@@ -106,8 +108,8 @@ export class UserService {
         this.http.get<any[]>(`${this.apiUrl}/usuarios/obtener-puestos`, { params })
       );
       return { error: null, data };
-    } catch (error) {
-      return { error, data: [] };
+    } catch (err:any) {
+      return { error: { raw: err, message: extractApiErrorMessage(err) }, data: [] };
     }
   }
 
