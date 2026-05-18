@@ -17,7 +17,11 @@
         </div>
         <div>
             <button (click)="launchDeletePopup(selectedUserId)">
-                <img src="assets/images/DeleteIcon.JPG" alt="Delete" class="delete-icon" />
+                <img src="assets/images/DeleteIcon.JPG"
+                alt="Delete"
+                class="delete-icon"
+                (click)="onDeleteConfirmed(selectedUserId)"
+                />
             </button>
         </div>
     </div>
