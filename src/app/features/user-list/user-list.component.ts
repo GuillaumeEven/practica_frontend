@@ -21,7 +21,7 @@ import { UserFormPopupComponent } from '../user-form-popup/user-form-popup.compo
 export class UserListComponent implements OnInit {
 
   formPopupMode: 'create' | 'update' | 'closed' = 'closed';
-  modoDeletePopup: 'CLOSED' | 'LAUNCH' = 'CLOSED';
+  deletePopupMode: 'CLOSED' | 'LAUNCH' = 'CLOSED';
   users: UsuarioVM[] = [];
   selectedUserId: number | null = null;
 
@@ -97,17 +97,28 @@ export class UserListComponent implements OnInit {
   launchDeletePopup(userId: number | null): void {
     if (userId === null) return;
     this.selectedUserId = userId;
-    this.modoDeletePopup = 'LAUNCH';
+    this.deletePopupMode = 'LAUNCH';
   }
 
   onCerrarDeletePopUpOk(): void {
-    this.modoDeletePopup = 'CLOSED';
+    this.deletePopupMode = 'CLOSED';
   }
 
   onCerrarDeletePopUpCancel(): void {
-    this.modoDeletePopup = 'CLOSED';
+    this.deletePopupMode = 'CLOSED';
   }
 
-  // @TODO: Implementar propiedades, atributos, métodos... necesarios para el funcionamiento del listado de usuarios
-
+  async onDeleteConfirmed(selectedUserId: number | null): Promise<void> {
+    console.log('Attempting to delete user with ID:', this.selectedUserId);
+    if (this.selectedUserId === null) return;
+    const nick = localStorage.getItem('nickUsuario') ?? '';
+    const pass = localStorage.getItem('contrasena') ?? '';
+    const res = await this.userService.eliminarUsuario(this.selectedUserId, nick, pass);
+    if (res.error) {
+      alert('Error: ' + (res.error?.message ?? res.error));
+      return;
+    }
+    await this.refreshUsers();
+    this.deletePopupMode = 'CLOSED';
+  }
 }
