@@ -70,11 +70,9 @@ export function calculateAge(dob?: string | Date | null): number | null {
 }
 
 /** Determine icon path from gender name (robust, case-insensitive) */
-export function genderIconFor(name?: string | null): string {
-  console.log('Determining gender icon for:', name);
-  if (!name) return 'assets/images/Other.png';
-  if (name.toLowerCase() === 'masculino') return 'assets/images/Male.JPG';
-  if (name.toLowerCase() === 'femenino') return 'assets/images/Female.JPG';
+export function genderIconFor(id?: number | null): string {
+  if (id === 1) return 'assets/images/Male.JPG';
+  if (id === 2) return 'assets/images/Female.JPG';
   return 'assets/images/Other.png';
 }
 
@@ -126,7 +124,7 @@ export function toViewModel(u: Usuario): UsuarioVM {
 
     // computed
     age: calculateAge(u.fecha_nacimiento),
-    genderIcon: genderIconFor(u.genero?.nombre),
+    genderIcon: genderIconFor(u.genero?.id),
     fechaHoraCreacionFormatted: fechaHoraCreacion,
     direccionPrincipal: extractDireccionPrincipal(u.direcciones),
     extraDirecciones: u.direcciones && u.direcciones.length > 1 ? u.direcciones.length - 1 : 0
@@ -229,6 +227,6 @@ export class UserMapperService {
 
   // expose helpers if consumers prefer DI
   calculateAge(dob?: string | Date | null): number | null { return calculateAge(dob); }
-  genderIconFor(name?: string | null): string { return genderIconFor(name); }
+  genderIconFor(id?: number | null): string { return genderIconFor(id); }
   extractDireccionPrincipal(dirs?: any[] | null): string { return extractDireccionPrincipal(dirs); }
 }
