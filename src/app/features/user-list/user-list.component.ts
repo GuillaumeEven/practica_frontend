@@ -62,6 +62,9 @@ export class UserListComponent implements OnInit {
       }
       // Map domain users -> view-models for display
       this.users = (result as Usuario[]).map(u => toViewModel(u));
+      if (this.users.length > 0) {
+        this.selectedUserId = this.users[0].id ?? null;
+      }
     });
 
   }
