@@ -59,8 +59,10 @@ export class UserListComponent implements OnInit {
         alert('Error al obtener usuarios: ' + result.error.message);
       } else if (result.data) {
         this.users = result.data.map(u => toViewModel(u));
+        this.selectedUserId = this.users.length > 0 ? this.users[0].id ?? null : null;
       }
     });
+
   }
 
   launchCreatePopup(): void {
@@ -106,7 +108,6 @@ export class UserListComponent implements OnInit {
   }
 
   async onDeleteConfirmed(selectedUserId: number | null): Promise<void> {
-    console.log('Attempting to delete user with ID:', this.selectedUserId);
     if (this.selectedUserId === null) return;
     const nick = localStorage.getItem('nickUsuario') ?? '';
     const pass = localStorage.getItem('contrasena') ?? '';
