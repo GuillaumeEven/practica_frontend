@@ -5,6 +5,7 @@ import { UsuarioVM, UsuarioRequest, toViewModel } from 'src/app/core/services/us
 import { UserService } from 'src/app/core/services/user.service';
 import { FormsModule } from '@angular/forms';
 import { UserFormPopupComponent } from '../user-form-popup/user-form-popup.component';
+import { DeleteConfirmPopupComponent } from '../delete-confirm-popup/delete-confirm-popup.component';
 
 @Component({
   selector: 'app-user-list',
@@ -14,13 +15,14 @@ import { UserFormPopupComponent } from '../user-form-popup/user-form-popup.compo
   imports: [
     CommonModule,
     UserFormPopupComponent,
+    DeleteConfirmPopupComponent,
     FormsModule
   ]
 })
 export class UserListComponent implements OnInit {
 
   formPopupMode: 'create' | 'update' | 'closed' = 'closed';
-  deletePopupMode: 'CLOSED' | 'LAUNCH' = 'CLOSED';
+  deletePopupMode: 'closed' | 'launch' = 'closed';
   users: UsuarioVM[] = [];
   selectedUserId: number | null = null;
 
@@ -36,6 +38,7 @@ export class UserListComponent implements OnInit {
     const pass = localStorage.getItem('contrasena');
     if (!nick || !pass) return;
     const result = await this.userService.obtenerUsuarios(nick, pass);
+    this.selectedUserId = result.data && result.data.length > 0 ? result.data[0].id ?? null : null;
     if (result.error) {
       alert('Error al obtener usuarios: ' + result.error.message);
     } else {
@@ -96,15 +99,15 @@ export class UserListComponent implements OnInit {
   launchDeletePopup(userId: number | null): void {
     if (userId === null) return;
     this.selectedUserId = userId;
-    this.deletePopupMode = 'LAUNCH';
+    this.deletePopupMode = 'launch';
   }
 
   onCerrarDeletePopUpOk(): void {
-    this.deletePopupMode = 'CLOSED';
+    this.deletePopupMode = 'closed';
   }
 
   onCerrarDeletePopUpCancel(): void {
-    this.deletePopupMode = 'CLOSED';
+    this.deletePopupMode = 'closed';
   }
 
   async onDeleteConfirmed(selectedUserId: number | null): Promise<void> {
@@ -117,6 +120,6 @@ export class UserListComponent implements OnInit {
       return;
     }
     await this.refreshUsers();
-    this.deletePopupMode = 'CLOSED';
+    this.deletePopupMode = 'closed';
   }
 }
