@@ -7,18 +7,18 @@ export function extractApiErrorMessage(err: any): string {
   return err?.error?.message ?? err?.message ?? 'Error desconocido';
 }
 
-export function isOkResponse(response) {
+export function isOkResponse(response: any): boolean {
     if (response && response.body && response.body.type === "OK") {
         return true
     }
     return false
 }
 
-export function loadResponseData(response) {
+export function loadResponseData(response: any): any {
     return response.body.data;
 }
 
-export function loadResponseError(response) {
+export function loadResponseError(response: any): string {
     if (!response || !response.body || !response.body.exception) {
         return "Error inesperado de servidor";
     } else {

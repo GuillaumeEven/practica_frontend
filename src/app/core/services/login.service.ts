@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import ConstUrls from "src/app/shared/contants/const-urls";
 import { Usuario } from '../models/user.model';
 import { firstValueFrom } from 'rxjs';
 import { extractApiErrorMessage } from './utils.service';
+import ConstRoutes from 'src/app/shared/contants/const-routes';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,7 @@ export class LoginService {
 
   apiUrl = ConstUrls.API_URL;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   async iniciarSesion(username: string, password: string): Promise<{ error:any|null, data?: Usuario }> {
     try {
@@ -21,5 +23,11 @@ export class LoginService {
     } catch (err:any) {
       return { error: { raw: err, message: extractApiErrorMessage(err) } };
     }
+  }
+
+  logout(): void {
+    localStorage.removeItem('nickUsuario');
+    localStorage.removeItem('contrasena');
+    this.router.navigate([ConstRoutes.PATH_LOGIN]);
   }
 }

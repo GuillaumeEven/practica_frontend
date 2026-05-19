@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import ConstRoutes from 'src/app/shared/contants/const-routes';
+import { LoginService } from 'src/app/core/services/login.service';
 
 @Component({
   selector: 'app-header',
@@ -9,11 +10,9 @@ import ConstRoutes from 'src/app/shared/contants/const-routes';
   standalone: true
 })
 export class HeaderComponent {
-  constructor(private router: Router) {}
+  constructor(private router: Router, private loginService: LoginService) {}
 
   logout(): void {
-    localStorage.removeItem('nickUsuario');
-    localStorage.removeItem('contrasena');
-    this.router.navigate([ConstRoutes.PATH_LOGIN]);
+    this.loginService.logout();
   }
 }

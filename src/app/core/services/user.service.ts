@@ -5,6 +5,7 @@ import { UsuarioRequest } from './user.mapper.service';
 import { firstValueFrom } from 'rxjs';
 import ConstUrls from 'src/app/shared/contants/const-urls';
 import { extractApiErrorMessage } from './utils.service';
+import { LoginService } from './login.service';
 
 
 @Injectable({
@@ -15,7 +16,7 @@ export class UserService {
   apiUrl = ConstUrls.API_URL;
 
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private loginService: LoginService) {}
 
   async obtenerUsuarioPorId(id: number) {
     try {
@@ -78,7 +79,11 @@ export class UserService {
         .set(ConstUrls.PASS_USUARIO_PARAM, password);
       await firstValueFrom(
         this.http.delete(`${this.apiUrl}/usuarios/${id}`, { params })
-      );
+      ).then(() => {
+        if (username === localStorage.getItem('nickUsuario')) {
+          this.loginService.logout();
+        }
+      });
       return { error: null };
     } catch (err:any) {
       return { error: { raw: err, message: extractApiErrorMessage(err) } };
