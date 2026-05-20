@@ -31,15 +31,34 @@ export const headers = new HttpHeaders({
 });
 
 export function loadCredentials(): HttpParams {
+    const usuario = obtenerUsuarioLogado();
+
+    if (!usuario?.nick_usuario || !usuario?.contrasena) {
+        return new HttpParams();
+    }
+
     return new HttpParams()
-        .set(ConstUrls.NICK_USUARIO_PARAM, obtenerUsuarioLogado().nick_usuario)
-        .set(ConstUrls.PASS_USUARIO_PARAM, obtenerUsuarioLogado().contrasena);
+        .set(ConstUrls.NICK_USUARIO_PARAM, usuario.nick_usuario)
+        .set(ConstUrls.PASS_USUARIO_PARAM, usuario.contrasena);
 }
 
-export function guardarUsuarioLogado(usuario: Usuario) {
+export function guardarUsuarioLogado(usuario: Usuario): void {
     localStorage.setItem(ConstLocalStorage.USUARIO_LOGADO_STORAGE, JSON.stringify(usuario));
+    // Keep individual keys so existing consumers can still read them directly.
+    localStorage.setItem('nickUsuario', usuario.nick_usuario);
+    localStorage.setItem('contrasena', usuario.contrasena);
 }
 
-export function obtenerUsuarioLogado(): Usuario {
-    return JSON.parse(localStorage.getItem(ConstLocalStorage.USUARIO_LOGADO_STORAGE));
+export function obtenerUsuarioLogado(): Usuario | null {
+    const raw = localStorage.getItem(ConstLocalStorage.USUARIO_LOGADO_STORAGE);
+
+    if (!raw) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(raw) as Usuario;
+    } catch {
+        return null;
+    }
 }

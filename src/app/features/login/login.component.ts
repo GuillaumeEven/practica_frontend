@@ -4,7 +4,7 @@ import ConstRouter from "src/app/shared/contants/const-routes";
 import { LoginService } from "../../core/services/login.service";
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-// import ConstLocalStorage from "src/app/shared/contants/const-local-storage";
+import { guardarUsuarioLogado } from '../../core/services/utils.service';
 
 
 @Component({
@@ -35,8 +35,7 @@ export class LoginComponent {
       this.loginError = result.error.message;
       return;
     }
-    localStorage.setItem('nickUsuario', this.nickUsuario);
-    localStorage.setItem('contrasena', this.password);
+    guardarUsuarioLogado({ ...(result.data ?? {}), nick_usuario: this.nickUsuario, contrasena: this.password } as any);
     this.router.navigate([ConstRouter.PATH_USUARIOS]);
   }
 

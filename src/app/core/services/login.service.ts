@@ -6,6 +6,7 @@ import { Usuario } from '../models/user.model';
 import { firstValueFrom } from 'rxjs';
 import { extractApiErrorMessage } from './utils.service';
 import ConstRoutes from 'src/app/shared/contants/const-routes';
+import ConstLocalStorage from 'src/app/shared/contants/const-local-storage';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,7 @@ export class LoginService {
   }
 
   logout(): void {
+    localStorage.removeItem(ConstLocalStorage.USUARIO_LOGADO_STORAGE);
     localStorage.removeItem('nickUsuario');
     localStorage.removeItem('contrasena');
     this.router.navigate([ConstRoutes.PATH_LOGIN]);
