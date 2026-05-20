@@ -64,7 +64,9 @@
             <td>{{u.age}}</td>
             <td>{{u.horaDesayunoFormatted}}</td>
             <td>{{u.puestoTrabajo?.nombre}}</td>
-            <td>{{u.direccionPrincipal}}</td>
+            <td>
+                <span class="main-address-text" [attr.title]="u.direccionPrincipal">{{u.direccionPrincipal}}</span>
+            </td>
             <td>{{u.extraDirecciones}}</td>
         </tr>
         </table>

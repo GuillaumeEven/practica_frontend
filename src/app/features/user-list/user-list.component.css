@@ -80,6 +80,16 @@ td {
 
 tr:nth-child(even) {background-color: #f7cecc;}
 th:first-child {min-width: 40px;}
+
+.main-address-text {
+  display: inline-block;
+  max-width: 240px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+
 .container-button {
   display: flex; /* alinear horizontalmente */
   gap: 10px;
