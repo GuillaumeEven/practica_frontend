@@ -7,6 +7,7 @@
     <div class="form-group">
         <label for="password">Password:</label>
         <input type="password" id="password" [(ngModel)]="password" name="password" required>
+        <p class="errorClass" *ngIf="loginError">{{ loginError }}</p>
     </div>
     <button (click)="login()">Login</button>
 </div>
