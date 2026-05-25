@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Usuario } from '../models/user.model';
 import { UsuarioRequest } from './user.mapper.service';
 import { firstValueFrom } from 'rxjs';
 import ConstUrls from 'src/app/shared/contants/const-urls';
-import { extractApiErrorMessage, obtenerUsuarioLogado } from './utils.service';
+import { extractApiErrorMessage, loadCredentials, obtenerUsuarioLogado } from './utils.service';
 import { LoginService } from './login.service';
 
 
@@ -18,11 +18,9 @@ export class UserService {
 
   constructor(private http: HttpClient, private loginService: LoginService) {}
 
-  async obtenerUsuarioPorId(id: number, username: string, password: string): Promise<{ error: any, data?: Usuario }> {
+  async obtenerUsuarioPorId(id: number): Promise<{ error: any, data?: Usuario }> {
     try {
-      const params = new HttpParams()
-        .set(ConstUrls.NICK_USUARIO_PARAM, username)
-        .set(ConstUrls.PASS_USUARIO_PARAM, password);
+      const params = loadCredentials();
       const data = await firstValueFrom(this.http.get<Usuario>(`${this.apiUrl}/usuarios/${id}`, { params }));
       return { error: null, data };
     } catch (err:any) {
@@ -30,11 +28,9 @@ export class UserService {
     }
   }
 
-  async obtenerUsuarios(username: string, password: string) {
+  async obtenerUsuarios(): Promise<{ error: any, data?: Usuario[] }> {
     try {
-      const params = new HttpParams()
-        .set(ConstUrls.NICK_USUARIO_PARAM, username)
-        .set(ConstUrls.PASS_USUARIO_PARAM, password);
+      const params = loadCredentials();
       const data = await firstValueFrom(this.http.get<Usuario[]>(`${this.apiUrl}/usuarios`, { params }));
       return { error: null, data };
     } catch (err:any) {
@@ -42,11 +38,9 @@ export class UserService {
     }
   }
 
-  async actualizarUsuario(id: number, user: UsuarioRequest, username: string, password: string): Promise<{ error: any, data?: Usuario }> {
+  async actualizarUsuario(id: number, user: UsuarioRequest): Promise<{ error: any, data?: Usuario }> {
     try {
-      const params = new HttpParams()
-        .set(ConstUrls.NICK_USUARIO_PARAM, username)
-        .set(ConstUrls.PASS_USUARIO_PARAM, password);
+      const params = loadCredentials();
       console.log('Updating user with ID:', id, 'Data:', user);
       const updated = await firstValueFrom(
         this.http.put<Usuario>(
@@ -61,11 +55,9 @@ export class UserService {
     }
   }
 
-  async crearUsuario(user: UsuarioRequest, username: string, password: string): Promise<{ error: any, data?: Usuario }> {
+  async crearUsuario(user: UsuarioRequest): Promise<{ error: any, data?: Usuario }> {
     try {
-      const params = new HttpParams()
-        .set(ConstUrls.NICK_USUARIO_PARAM, username)
-        .set(ConstUrls.PASS_USUARIO_PARAM, password);
+      const params = loadCredentials();
       const created = await firstValueFrom(
         this.http.post<Usuario>(`${this.apiUrl}/usuarios`, user, { params })
       );
@@ -75,11 +67,9 @@ export class UserService {
     }
   }
 
-  async eliminarUsuario(id: number, username: string, password: string): Promise<{ error: any }> {
+  async eliminarUsuario(id: number): Promise<{ error: any }> {
     try {
-      const params = new HttpParams()
-        .set(ConstUrls.NICK_USUARIO_PARAM, username)
-        .set(ConstUrls.PASS_USUARIO_PARAM, password);
+      const params = loadCredentials();
       await firstValueFrom(this.http.delete(`${this.apiUrl}/usuarios/${id}`, { params }));
       const loggedUser = obtenerUsuarioLogado();
       if (loggedUser?.id === id) {
@@ -91,11 +81,9 @@ export class UserService {
     }
   }
 
-  async obtenerGeneros(username: string, password: string): Promise<{ error: any, data?: any[] }> {
+  async obtenerGeneros(): Promise<{ error: any, data?: any[] }> {
     try {
-      const params = new HttpParams()
-        .set(ConstUrls.NICK_USUARIO_PARAM, username)
-        .set(ConstUrls.PASS_USUARIO_PARAM, password);
+      const params = loadCredentials();
       const data = await firstValueFrom(
         this.http.get<any[]>(`${this.apiUrl}/generos`, { params })
       );
@@ -105,11 +93,9 @@ export class UserService {
     }
   }
 
-  async obtenerPuestosDeTrabajo(username: string, password: string): Promise<{ error: any, data?: any[] }> {
+  async obtenerPuestosDeTrabajo(): Promise<{ error: any, data?: any[] }> {
     try {
-      const params = new HttpParams()
-        .set(ConstUrls.NICK_USUARIO_PARAM, username)
-        .set(ConstUrls.PASS_USUARIO_PARAM, password);
+      const params = loadCredentials();
       const data = await firstValueFrom(
         this.http.get<any[]>(`${this.apiUrl}/usuarios/obtener-puestos`, { params })
       );

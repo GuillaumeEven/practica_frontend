@@ -58,11 +58,9 @@ export class UserFormPopupComponent implements OnInit, OnChanges {
   }
 
   private async loadCombos(): Promise<void> {
-    const nick = localStorage.getItem('nickUsuario') ?? '';
-    const pass = localStorage.getItem('contrasena') ?? '';
     const [gRes, pRes] = await Promise.all([
-      this.userService.obtenerGeneros(nick, pass),
-      this.userService.obtenerPuestosDeTrabajo(nick, pass)
+      this.userService.obtenerGeneros(),
+      this.userService.obtenerPuestosDeTrabajo()
     ]);
     this.generos = gRes.data ?? [];
     this.puestosDeTrabajo = pRes.data ?? [];

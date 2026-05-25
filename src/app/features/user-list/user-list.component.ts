@@ -33,39 +33,18 @@ export class UserListComponent implements OnInit {
     return this.users.find(u => u.id === this.selectedUserId);
   }
 
-  private async refreshUsers() {
-    const nick = localStorage.getItem('nickUsuario');
-    const pass = localStorage.getItem('contrasena');
-    if (!nick || !pass) return;
-    const result = await this.userService.obtenerUsuarios(nick, pass);
-    this.selectedUserId = result.data && result.data.length > 0 ? result.data[0].id ?? null : null;
+  private async refreshUsers(): Promise<void> {
+    const result = await this.userService.obtenerUsuarios();
     if (result.error) {
       alert('Error al obtener usuarios: ' + result.error.message);
     } else {
       this.users = (result.data ?? []).map(u => toViewModel(u));
+      this.selectedUserId = this.users.length > 0 ? this.users[0].id ?? null : null;
     }
   }
 
   ngOnInit(): void {
-    // Load users from service on component initialization
-    const nick = localStorage.getItem('nickUsuario');
-    const pass = localStorage.getItem('contrasena');
-
-    // Guard: ensure both credentials are available
-    if (!nick || !pass) {
-      alert('Error: Missing credentials in storage');
-      return;
-    }
-
-    this.userService.obtenerUsuarios(nick, pass).then((result) => {
-      if (result.error) {
-        alert('Error al obtener usuarios: ' + result.error.message);
-      } else if (result.data) {
-        this.users = result.data.map(u => toViewModel(u));
-        this.selectedUserId = this.users.length > 0 ? this.users[0].id ?? null : null;
-      }
-    });
-
+    this.refreshUsers();
   }
 
   launchCreatePopup(): void {
@@ -83,11 +62,9 @@ export class UserListComponent implements OnInit {
   }
 
   async onFormSaved(user: UsuarioRequest): Promise<void> {
-    const nick = localStorage.getItem('nickUsuario') ?? '';
-    const pass = localStorage.getItem('contrasena') ?? '';
     const res = this.formPopupMode === 'create'
-      ? await this.userService.crearUsuario(user, nick, pass)
-      : await this.userService.actualizarUsuario(this.selectedUserId!, user, nick, pass);
+      ? await this.userService.crearUsuario(user)
+      : await this.userService.actualizarUsuario(this.selectedUserId!, user);
     if (res.error) {
       alert('Error: ' + (res.error?.message ?? res.error));
       return;
@@ -112,9 +89,7 @@ export class UserListComponent implements OnInit {
 
   async onDeleteConfirmed(): Promise<void> {
     if (this.selectedUserId === null) return;
-    const nick = localStorage.getItem('nickUsuario') ?? '';
-    const pass = localStorage.getItem('contrasena') ?? '';
-    const res = await this.userService.eliminarUsuario(this.selectedUserId, nick, pass);
+    const res = await this.userService.eliminarUsuario(this.selectedUserId);
     if (res.error) {
       alert('Error: ' + (res.error?.message ?? res.error));
       return;

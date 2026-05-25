@@ -4,7 +4,17 @@ import ConstLocalStorage from "../../shared/contants/const-local-storage";
 import {Usuario} from "../models/user.model";
 
 export function extractApiErrorMessage(err: any): string {
-  return err?.error?.message ?? err?.message ?? 'Error desconocido';
+    const body = err?.error;
+    // Cas Spring Boot validation: { errors: [{ message }] }
+    if (Array.isArray(body?.errors) && body.errors.length > 0) {
+        // Prend le champ 'message' ou 'defaultMessage' si présent
+        return body.errors.map((e: any) => e?.message || e?.defaultMessage || JSON.stringify(e)).join(' | ');
+    }
+    // Cas custom: { exception: { mensajeDeError } }
+    if (body?.exception?.mensajeDeError) return body.exception.mensajeDeError;
+    // Cas standard: { message }
+    if (body?.message) return body.message;
+    return err?.message ?? 'Error desconocido';
 }
 
 export function isOkResponse(response: any): boolean {
