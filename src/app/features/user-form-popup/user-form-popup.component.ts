@@ -6,6 +6,8 @@ import { UserService } from 'src/app/core/services/user.service';
 import { PuestoDeTrabajo } from 'src/app/core/models/puestodetrabajo.model';
 import { Genero } from 'src/app/core/models/genero.model';
 import { Direccion } from 'src/app/core/models/direccion.model';
+import { GeneroManagerPopupComponent } from '../genero-manager-popup/genero-manager-popup.component';
+import { PuestoManagerPopupComponent } from '../puesto-manager-popup/puesto-manager-popup.component';
 
 // Interfaz interna para las direcciones en el formulario (camelCase para el UI)
 export interface DireccionRow {
@@ -20,9 +22,9 @@ export interface DireccionRow {
 @Component({
   selector: 'app-user-form-popup',
   templateUrl: './user-form-popup.component.html',
-  styleUrls: ['./user-form-popup.component.css'],
+  styleUrls: ['./user-form-popup.component.css', '../shared/form-controls.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule, GeneroManagerPopupComponent, PuestoManagerPopupComponent]
 })
 export class UserFormPopupComponent implements OnInit, OnChanges {
 
@@ -44,6 +46,26 @@ export class UserFormPopupComponent implements OnInit, OnChanges {
 
   // Modelo interno del formulario
   model: Partial<UsuarioVM> = {};
+
+  // popup states
+  isGeneroManagerOpen = false;
+  isPuestoManagerOpen = false;
+  // alert state surfaced from child managers
+  alertMessage: string | null = null;
+  alertType: 'error' | 'success' | null = null;
+
+  clearAlert(): void {
+    this.alertMessage = null;
+    this.alertType = null;
+  }
+
+  onChildAlert(event: { type: 'error' | 'success', message: string }): void {
+    this.alertType = event.type;
+    this.alertMessage = event.message;
+    console.log('[user-form-popup] child alert', event);
+    // auto-clear after 5 seconds
+    setTimeout(() => this.clearAlert(), 5000);
+  }
 
   get title(): string {
     return this.mode === 'create' ? 'Create User' : 'Update User';
@@ -130,6 +152,31 @@ export class UserFormPopupComponent implements OnInit, OnChanges {
           `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')} ` +
           `${String(dt.getHours()).padStart(2, '0')}:${String(dt.getMinutes()).padStart(2, '0')}`;
       }
+    }
+  }
+
+  openGeneroManager(): void {
+    this.isGeneroManagerOpen = true;
+  }
+
+  async onGenerosUpdated(newList: Genero[]): Promise<void> {
+    this.generos = [...newList];
+    this.isGeneroManagerOpen = false;
+    // if model has no genero, select the last created one
+    if (!this.model.genero && this.generos.length) {
+      this.model.genero = this.generos[this.generos.length - 1];
+    }
+  }
+
+  openPuestoManager(): void {
+    this.isPuestoManagerOpen = true;
+  }
+
+  async onPuestosUpdated(newList: PuestoDeTrabajo[]): Promise<void> {
+    this.puestosDeTrabajo = [...newList];
+    this.isPuestoManagerOpen = false;
+    if (!this.model.puestoTrabajo && this.puestosDeTrabajo.length) {
+      this.model.puestoTrabajo = this.puestosDeTrabajo[this.puestosDeTrabajo.length - 1];
     }
   }
 

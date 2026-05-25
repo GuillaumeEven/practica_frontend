@@ -1,0 +1,97 @@
+.field-with-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.field-with-action select {
+  flex: 1 1 auto;
+}
+
+/* ------------------------------------------------------------ */
+/* Icon-only button (small chrome for inline action buttons)    */
+/* ------------------------------------------------------------ */
+.icon-btn {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: inherit;
+  font-size: 14px;
+}
+
+.icon-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 4px;
+}
+
+.icon-btn:focus {
+  outline: 2px solid #6aa0ff;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.icon-btn::-moz-focus-inner {
+  border: 0;
+}
+
+/* ------------------------------------------------------------ */
+/* Helpers used by forms                                         */
+/* ------------------------------------------------------------ */
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-field span {
+  font-size: 12px;
+  color: #666;
+}
+
+/* ------------------------------------------------------------ */
+/* Alert banner                                                   */
+/* Positioned fixed so it remains visible above dialog contents   */
+/* ------------------------------------------------------------ */
+.alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  margin: 8px 0;
+}
+
+.dialog-box .alert {
+  position: fixed;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  width: min(90%, 520px);
+  margin: 0;
+}
+
+.alert--error {
+  background: #ffe6e6;
+  color: #8b0000;
+  border: 1px solid #f5c2c2;
+}
+
+.alert--success {
+  background: #e6fff0;
+  color: #00703c;
+  border: 1px solid #bfe6c8;
+}

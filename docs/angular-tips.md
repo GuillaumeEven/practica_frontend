@@ -491,6 +491,86 @@ const [gRes, pRes] = await Promise.all([
 
 *Última actualización: mayo 2026*
 
+## Accesibilidad: ARIA y focus trap
+
+Objetivo: hacer que el popup sea legible para lectores de pantalla y completamente usable con teclado.
+
+Puntos esenciales
+- Rol y atributos ARIA: marcar el diálogo con `role="dialog"`, indicar si es modal con `aria-modal="true"`, y enlazar título/descripcion con `aria-labelledby` y `aria-describedby`. El botón que abre debe usar `aria-haspopup="dialog"`, `aria-expanded="true|false"` y `aria-controls="ID_DEL_DIALOG"`.
+- Focus inicial: al abrir, mover el foco al primer elemento focusable del popup (o al título).
+- Focus trap: capturar `Tab` / `Shift+Tab` para mantener el foco dentro del popup mientras esté abierto.
+- Atajos de teclado: `Esc` debe cerrar el popup. Todos los controles deben ser accesibles por teclado.
+- Restaurar el foco: al cerrar, devolver el foco al botón que abrió el popup.
+- Visuales y anuncios: estilos de foco visibles; usar `aria-live` para mensajes dinámicos si es necesario.
+- Pruebas: comprobar navegación solo con teclado, uso con lector de pantalla (NVDA/VoiceOver) y pasar herramientas como axe o Lighthouse.
+
+Ejemplo HTML mínimo
+```html
+<button id="openGenero"
+        aria-label="Gestionar géneros"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        aria-controls="generoDialog">
+  🏷️
+</button>
+
+<div id="generoDialog"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="generoTitle"
+     aria-describedby="generoDesc"
+     hidden>
+  <h2 id="generoTitle">Gestionar géneros</h2>
+  <p id="generoDesc">Crear, editar o eliminar un género</p>
+  <button id="closeGenero" aria-label="Cerrar">✖</button>
+  <!-- controles focusables: inputs, buttons, selects -->
+</div>
+```
+
+Ejemplo JS simple de focus trap (vanilla)
+```js
+const opener = document.getElementById('openGenero');
+const dialog = document.getElementById('generoDialog');
+const closeBtn = document.getElementById('closeGenero');
+let previouslyFocused;
+
+const focusableSel = 'a,button,input,select,textarea,[tabindex]:not([tabindex="-1"])';
+
+function openDialog() {
+  previouslyFocused = document.activeElement;
+  dialog.hidden = false;
+  opener.setAttribute('aria-expanded', 'true');
+  const focusable = Array.from(dialog.querySelectorAll(focusableSel)).filter(el => !el.disabled);
+  (focusable[0] || dialog).focus();
+  document.addEventListener('keydown', handleKey);
+}
+
+function closeDialog() {
+  dialog.hidden = true;
+  opener.setAttribute('aria-expanded', 'false');
+  document.removeEventListener('keydown', handleKey);
+  previouslyFocused?.focus();
+}
+
+function handleKey(e) {
+  if (e.key === 'Escape') { closeDialog(); return; }
+  if (e.key !== 'Tab') return;
+  const focusable = Array.from(dialog.querySelectorAll(focusableSel)).filter(el => !el.disabled);
+  if (focusable.length === 0) { e.preventDefault(); return; }
+  const first = focusable[0], last = focusable[focusable.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+}
+
+opener.addEventListener('click', openDialog);
+closeBtn.addEventListener('click', closeDialog);
+```
+
+Notas prácticas
+- En Angular, implementa la lógica en el componente (en los hooks de apertura/cierre) y usa `Renderer2` si necesitas manipular el DOM de forma segura.
+- Si prefieres evitar la implementación manual, usa `@angular/cdk` (`cdkTrapFocus` y `Dialog`) para gestión accesible del foco y del diálogo.
+- Prueba: cierre con `Esc`, navegación completa con `Tab`, y restauración del foco al abrir/cerrar.
+
 ## Operador spread (`...`)
 
 - Qué hace: copia superficial (shallow copy) de objetos o arrays. Permite "expandir" elementos o propiedades.

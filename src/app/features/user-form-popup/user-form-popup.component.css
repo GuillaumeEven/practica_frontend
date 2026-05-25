@@ -83,3 +83,38 @@
   border: 1px solid #aaa;
   padding: 2px 4px;
 }
+
+/* Field with action (select + small icon button) */
+.field-with-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.field-with-action select {
+  flex: 1 1 auto;
+}
+
+/* Icon-only button: no blue background, minimal chrome */
+.icon-btn {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: inherit;
+  font-size: 14px; /* emoji / icon size */
+}
+.icon-btn:hover {
+  background: rgba(0,0,0,0.04);
+  border-radius: 4px;
+}
+.icon-btn:focus {
+  outline: 2px solid #6aa0ff; /* visible focus ring for accessibility */
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Minimal reset for default button focus in some browsers */
+.icon-btn::-moz-focus-inner { border: 0; }

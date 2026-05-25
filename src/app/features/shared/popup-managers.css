@@ -1,0 +1,153 @@
+:host {
+	display: block;
+}
+
+/* Popup container */
+.popup {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	max-height: 70vh;
+	overflow: auto;
+	padding: 12px 0;
+}
+
+/* Header */
+header h2 {
+	margin: 0 0 4px 0;
+}
+
+/* List reset */
+section ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+/* Each list row: horizontal flex with spacing */
+section ul li {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 8px 0;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.item-label {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+    text-align: left;
+}
+
+.item-actions {
+	display: flex;
+	gap: 6px;
+	flex: 0 0 auto;
+}
+
+.row-icon-btn {
+	background: transparent;
+	border: none;
+	width: 32px;
+	height: 32px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	color: #333;
+	border-radius: 4px;
+}
+
+.row-icon-btn svg {
+	width: 16px;
+	height: 16px;
+	display: block;
+}
+
+.row-icon-btn:hover {
+	background: rgba(0, 0, 0, 0.04);
+}
+
+/* Force icon visibility and correct fill */
+button.row-icon-btn {
+	color: #333 !important;
+	background: transparent !important;
+}
+
+button.row-icon-btn svg {
+	width: 16px;
+	height: 16px;
+	display: block;
+}
+
+button.row-icon-btn svg path {
+	fill: currentColor !important;
+}
+
+/* make delete icon red */
+button.row-icon-btn[aria-label="Eliminar"] {
+	color: #d32f2f !important;
+}
+
+/* Stronger, popup-scoped overrides in case global/nav rules shadow these icons */
+.dialog-box button.row-icon-btn {
+	color: #333 !important;
+	background: transparent !important;
+}
+
+.dialog-box button.row-icon-btn svg {
+	display: block !important;
+	visibility: visible !important;
+	width: 16px !important;
+	height: 16px !important;
+}
+
+.dialog-box button.row-icon-btn svg path {
+	fill: currentColor !important;
+	stroke: none !important;
+}
+
+.dialog-box .item-actions {
+	z-index: 2100;
+}
+
+/* Override global button paddings that come from nav/global styles */
+.dialog-box button.row-icon-btn {
+	padding: 0 !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	width: 32px !important;
+	height: 32px !important;
+	min-width: 32px !important;
+	box-sizing: border-box !important;
+	font-size: 0 !important;
+	line-height: 0 !important;
+}
+
+.dialog-box button.row-icon-btn svg {
+	margin: 0 !important;
+}
+
+.new-item {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+}
+
+footer {
+	margin-top: 12px;
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+}
+
+footer button {
+	min-width: 96px;
+}

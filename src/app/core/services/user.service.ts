@@ -93,15 +93,75 @@ export class UserService {
     }
   }
 
+  async crearGenero(payload: { nombre: string }): Promise<{ error: any, data?: any }> {
+    try {
+      const params = loadCredentials();
+      const created = await firstValueFrom(this.http.post<any>(`${this.apiUrl}/generos`, payload, { params }));
+      return { error: null, data: created };
+    } catch (err:any) {
+      return { error: { raw: err, message: extractApiErrorMessage(err) }, data: undefined };
+    }
+  }
+
+  async actualizarGenero(id: number, payload: { nombre: string }): Promise<{ error: any, data?: any }> {
+    try {
+      const params = loadCredentials();
+      const updated = await firstValueFrom(this.http.put<any>(`${this.apiUrl}/generos/${id}`, payload, { params }));
+      return { error: null, data: updated };
+    } catch (err:any) {
+      return { error: { raw: err, message: extractApiErrorMessage(err) }, data: undefined };
+    }
+  }
+
+  async eliminarGenero(id: number): Promise<{ error: any }> {
+    try {
+      const params = loadCredentials();
+      await firstValueFrom(this.http.delete(`${this.apiUrl}/generos/${id}`, { params }));
+      return { error: null };
+    } catch (err:any) {
+      return { error: { raw: err, message: extractApiErrorMessage(err) } };
+    }
+  }
+
   async obtenerPuestosDeTrabajo(): Promise<{ error: any, data?: any[] }> {
     try {
       const params = loadCredentials();
       const data = await firstValueFrom(
-        this.http.get<any[]>(`${this.apiUrl}/usuarios/obtener-puestos`, { params })
+        this.http.get<any[]>(`${this.apiUrl}/puestos`, { params })
       );
       return { error: null, data };
     } catch (err:any) {
       return { error: { raw: err, message: extractApiErrorMessage(err) }, data: [] };
+    }
+  }
+
+  async crearPuesto(payload: { nombre: string }): Promise<{ error: any, data?: any }> {
+    try {
+      const params = loadCredentials();
+      const created = await firstValueFrom(this.http.post<any>(`${this.apiUrl}/puestos`, payload, { params }));
+      return { error: null, data: created };
+    } catch (err:any) {
+      return { error: { raw: err, message: extractApiErrorMessage(err) }, data: undefined };
+    }
+  }
+
+  async actualizarPuesto(id: number, payload: { nombre: string }): Promise<{ error: any, data?: any }> {
+    try {
+      const params = loadCredentials();
+      const updated = await firstValueFrom(this.http.put<any>(`${this.apiUrl}/puestos/${id}`, payload, { params }));
+      return { error: null, data: updated };
+    } catch (err:any) {
+      return { error: { raw: err, message: extractApiErrorMessage(err) }, data: undefined };
+    }
+  }
+
+  async eliminarPuesto(id: number): Promise<{ error: any }> {
+    try {
+      const params = loadCredentials();
+      await firstValueFrom(this.http.delete(`${this.apiUrl}/puestos/${id}`, { params }));
+      return { error: null };
+    } catch (err:any) {
+      return { error: { raw: err, message: extractApiErrorMessage(err) } };
     }
   }
 

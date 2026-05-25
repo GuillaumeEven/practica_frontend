@@ -4,6 +4,12 @@
     <h2>{{ title }}</h2>
   </div>
 
+    <!-- Alert area -->
+    <div *ngIf="alertMessage" class="alert" [ngClass]="{'alert--error': alertType==='error', 'alert--success': alertType==='success'}">
+        <span>{{ alertMessage }}</span>
+        <button type="button" class="icon-btn" aria-label="Close alert" (click)="clearAlert()">✖</button>
+    </div>
+
   <form #f="ngForm" (ngSubmit)="onSave()">
     <div class="form-grid">
 
@@ -51,19 +57,40 @@
 
     <label class="form-field">
         <span>Gender</span>
-        <select name="genero" [(ngModel)]="model.genero" [compareWith]="compareById">
-            <option [ngValue]="null">-- Select --</option>
-            <option *ngFor="let g of generos" [ngValue]="g">{{ g.nombre }}</option>
-        </select>
+        <div class="field-with-action">
+          <select name="genero" [(ngModel)]="model.genero" [compareWith]="compareById">
+              <option [ngValue]="null">-- Select --</option>
+              <option *ngFor="let g of generos" [ngValue]="g">{{ g.nombre }}</option>
+          </select>
+          <button type="button" class="icon-btn" aria-label="Gestionar géneros" aria-haspopup="dialog" [attr.aria-expanded]="isGeneroManagerOpen" (click)="openGeneroManager()">⚙️</button>
+        </div>
     </label>
 
     <label class="form-field">
         <span>Job Position</span>
-        <select name="puestoTrabajo" [(ngModel)]="model.puestoTrabajo" [compareWith]="compareById">
-            <option [ngValue]="null">-- Select --</option>
-            <option *ngFor="let p of puestosDeTrabajo" [ngValue]="p">{{ p.nombre }}</option>
-        </select>
+        <div class="field-with-action">
+          <select name="puestoTrabajo" [(ngModel)]="model.puestoTrabajo" [compareWith]="compareById">
+              <option [ngValue]="null">-- Select --</option>
+              <option *ngFor="let p of puestosDeTrabajo" [ngValue]="p">{{ p.nombre }}</option>
+          </select>
+          <button type="button" class="icon-btn" aria-label="Gestionar puestos" aria-haspopup="dialog" [attr.aria-expanded]="isPuestoManagerOpen" (click)="openPuestoManager()">⚙️</button>
+        </div>
     </label>
+
+    <!-- Popups managers -->
+    <app-genero-manager-popup *ngIf="isGeneroManagerOpen"
+                              [items]="generos"
+                              (saved)="onGenerosUpdated($event)"
+                              (cancelled)="isGeneroManagerOpen=false"
+                              (alert)="onChildAlert($event)">
+    </app-genero-manager-popup>
+
+    <app-puesto-manager-popup *ngIf="isPuestoManagerOpen"
+                             [items]="puestosDeTrabajo"
+                             (saved)="onPuestosUpdated($event)"
+                             (cancelled)="isPuestoManagerOpen=false"
+                             (alert)="onChildAlert($event)">
+    </app-puesto-manager-popup>
 
     <label class="form-field form-field--checkbox">
         <span>Admin</span>
