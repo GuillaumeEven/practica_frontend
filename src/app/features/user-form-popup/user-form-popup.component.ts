@@ -58,12 +58,12 @@ export class UserFormPopupComponent implements OnInit, OnChanges {
   }
 
   private async loadCombos(): Promise<void> {
-    const [gRes, pRes] = await Promise.all([
+    const [generoResponse, puestoResponse] = await Promise.all([
       this.userService.obtenerGeneros(),
       this.userService.obtenerPuestosDeTrabajo()
     ]);
-    this.generos = gRes.data ?? [];
-    this.puestosDeTrabajo = pRes.data ?? [];
+    this.generos = generoResponse.data ?? [];
+    this.puestosDeTrabajo = puestoResponse.data ?? [];
   }
 
   // Helper para la comparación en ngModel con objetos

@@ -478,6 +478,15 @@ const [gRes, pRes] = await Promise.all([
 ]);
 ```
 
+### Async/Promises (explicación breve)
+
+- Una función marcada `async` devuelve siempre una `Promise`.
+- `await` pausa la ejecución de la función `async` hasta que la `Promise` se resuelva (o rechace).
+- Si dentro de una `async` haces `await otraFunc()`, la primera función queda en espera hasta que `otraFunc()` termine — esto crea una cadena de Promises.
+- `Promise.all([p1, p2])` ejecuta las Promises en paralelo y devuelve una `Promise` que se resuelve con un array de resultados. Por ejemplo: `const [gRes, pRes] = await Promise.all([obtenerGeneros(), obtenerPuestos()])` donde `gRes` y `pRes` son las respuestas individuales.
+- En Angular es común declarar `async ngOnInit()` y `await` llamadas internas; `ngOnInit` devolverá una Promise que se resuelve cuando todas las operaciones `await` internas hayan finalizado.
+
+
 ---
 
 *Última actualización: mayo 2026*
@@ -525,11 +534,7 @@ const calle = usuario?.direcciones?.[0]?.nombreCalle ?? '—';
   - No sustituye la validación: sigue siendo buena idea normalizar/parsear datos en el componente.
 
 ## Buenas prácticas rápidas
-
-- Pre-calcula valores derivados (ej.: `genderIcon`) en el componente en `ngOnInit`, no en el template.
-- Usa spread para inmutabilidad superficial; para copias profundas usa `structuredClone()` o librerías especializadas.
-- Combina `?.` con `??` para defaults legibles.
-
+ 
 ---
 
 ### Nota sobre `pad` y `padStart`
