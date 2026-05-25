@@ -103,7 +103,7 @@ export class UserService {
         .set(ConstUrls.NICK_USUARIO_PARAM, username)
         .set(ConstUrls.PASS_USUARIO_PARAM, password);
       const data = await firstValueFrom(
-        this.http.get<any[]>(`${this.apiUrl}/usuarios/obtener-generos`, { params })
+        this.http.get<any[]>(`${this.apiUrl}/generos`, { params })
       );
       return { error: null, data };
     } catch (err:any) {
