@@ -110,7 +110,7 @@ export class UserListComponent implements OnInit {
     this.deletePopupMode = 'closed';
   }
 
-  async onDeleteConfirmed(selectedUserId: number | null): Promise<void> {
+  async onDeleteConfirmed(): Promise<void> {
     if (this.selectedUserId === null) return;
     const nick = localStorage.getItem('nickUsuario') ?? '';
     const pass = localStorage.getItem('contrasena') ?? '';

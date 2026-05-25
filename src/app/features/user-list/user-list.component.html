@@ -11,7 +11,7 @@
     *ngIf="deletePopupMode !== 'closed'"
     [mode]="deletePopupMode"
     [user]="deletePopupMode === 'launch' ? selectedUser : undefined"
-    (confirmed)="onDeleteConfirmed(selectedUserId)"
+    (confirmed)="onDeleteConfirmed()"
     (cancelled)="onCerrarDeletePopUpCancel()">
 </app-delete-confirm-popup>
 
@@ -41,7 +41,7 @@
             <th>Full Name</th>
             <th>Creation</th>
             <th>Age</th>
-            <th>Freakfast</th>
+            <th>Breakfast</th>
             <th>Job Position</th>
             <th>Main Address</th>
             <th>Extra Addresses</th>
