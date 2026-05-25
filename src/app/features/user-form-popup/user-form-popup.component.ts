@@ -54,7 +54,6 @@ export class UserFormPopupComponent implements OnInit, OnChanges {
   }
 
   async ngOnInit(): Promise<void> {
-    this.initModel();
     await this.loadCombos();
   }
 
