@@ -55,8 +55,8 @@ export function loadCredentials(): HttpParams {
 export function guardarUsuarioLogado(usuario: Usuario): void {
     localStorage.setItem(ConstLocalStorage.USUARIO_LOGADO_STORAGE, JSON.stringify(usuario));
     // Keep individual keys so existing consumers can still read them directly.
-    localStorage.setItem('nickUsuario', usuario.nick_usuario);
-    localStorage.setItem('contrasena', usuario.contrasena);
+    localStorage.setItem('nickUsuario', usuario.nick_usuario ?? '');
+    localStorage.setItem('contrasena', usuario.contrasena ?? '');
 }
 
 export function obtenerUsuarioLogado(): Usuario | null {
