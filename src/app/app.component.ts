@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import {RouterOutlet} from "@angular/router";
-import { LoginService } from "./core/services/login.service";
 
 @Component({
   selector: "app-root",
@@ -9,9 +8,7 @@ import { LoginService } from "./core/services/login.service";
   imports: [
     RouterOutlet
   ],
-  providers: [LoginService],
   standalone: true,
-
 })
 export class AppComponent {
 
