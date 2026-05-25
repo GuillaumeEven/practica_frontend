@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Usuario } from 'src/app/core/models/user.model';
 import { UsuarioVM } from 'src/app/core/services/user.mapper.service';
 
 @Component({

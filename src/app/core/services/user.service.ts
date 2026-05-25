@@ -4,7 +4,7 @@ import { Usuario } from '../models/user.model';
 import { UsuarioRequest } from './user.mapper.service';
 import { firstValueFrom } from 'rxjs';
 import ConstUrls from 'src/app/shared/contants/const-urls';
-import { extractApiErrorMessage } from './utils.service';
+import { extractApiErrorMessage, obtenerUsuarioLogado } from './utils.service';
 import { LoginService } from './login.service';
 
 
@@ -77,20 +77,14 @@ export class UserService {
 
   async eliminarUsuario(id: number, username: string, password: string): Promise<{ error: any }> {
     try {
-      const userToDelete = await this.obtenerUsuarioPorId(id, username, password);
-      if (userToDelete.error) {
-        return { error: { raw: userToDelete.error.raw, message: extractApiErrorMessage(userToDelete.error.raw) } };
-      }
       const params = new HttpParams()
         .set(ConstUrls.NICK_USUARIO_PARAM, username)
         .set(ConstUrls.PASS_USUARIO_PARAM, password);
-      await firstValueFrom(
-        this.http.delete(`${this.apiUrl}/usuarios/${id}`, { params })
-      ).then(() => {
-        if (username === userToDelete.data?.nick_usuario) {
-          this.loginService.logout();
-        }
-      });
+      await firstValueFrom(this.http.delete(`${this.apiUrl}/usuarios/${id}`, { params }));
+      const loggedUser = obtenerUsuarioLogado();
+      if (loggedUser?.id === id) {
+        this.loginService.logout();
+      }
       return { error: null };
     } catch (err:any) {
       return { error: { raw: err, message: extractApiErrorMessage(err) } };
