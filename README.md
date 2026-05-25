@@ -1,6 +1,6 @@
 # Práctica Final — Frontend (Angular 19)
 
-Aplicación web desarrollada en **Angular 19** para la gestión de usuarios, direcciones, géneros y puestos de trabajo. Este frontend consume la API REST del backend Java Spring Boot (ver carpeta `../practica_backend`).
+Aplicación web desarrollada en **Angular 19** para la gestión de usuarios, direcciones, géneros y puestos de trabajo. Este frontend consume la API REST del backend Java Spring Boot (consultable [aquí](https://github.com/GuillaumeEven/practica_backend)).
 
 ---
 
@@ -52,7 +52,7 @@ Aplicación web desarrollada en **Angular 19** para la gestión de usuarios, dir
 
 ## 🔗 Integración con el backend
 
-- El frontend consume la API REST definida en el backend Java Spring Boot (`../practica_backend`).
+- El frontend consume la API REST definida en el [backend Java Spring Boot](https://github.com/GuillaumeEven/practica_backend).
 - Todas las operaciones (login, CRUD de usuarios, consulta de géneros/puestos) se realizan vía HTTP.
 - El login es simulado (no seguro para producción), solo para fines didácticos.
 
