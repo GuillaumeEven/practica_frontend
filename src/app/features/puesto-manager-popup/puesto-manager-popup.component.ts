@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PuestoDeTrabajo } from '../../core/models/puestodetrabajo.model';
 import { UserService } from 'src/app/core/services/user.service';
+import { CatalogService } from 'src/app/core/services/catalog.service';
 
 @Component({
   selector: 'app-puesto-manager-popup',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './puesto-manager-popup.component.html',
-  styleUrls: ['../shared/form-controls.css','../shared/popup-managers.css']
+  styleUrls: ['../shared/form-controls.css']
 })
 export class PuestoManagerPopupComponent implements OnInit {
   @Input() items: PuestoDeTrabajo[] = [];
@@ -22,14 +23,19 @@ export class PuestoManagerPopupComponent implements OnInit {
   newName = '';
   loading = false;
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private catalog: CatalogService) {}
+
+  private deepClone<T>(src: T): T {
+    if (typeof structuredClone === 'function') return structuredClone(src as any) as T;
+    return JSON.parse(JSON.stringify(src));
+  }
 
   async ngOnInit(): Promise<void> {
     if (!this.items || this.items.length === 0) {
       const res = await this.userService.obtenerPuestosDeTrabajo();
-      this.items = res.data ?? [];
+      this.items = (res.data ?? []).map(i => this.deepClone(i));
     } else {
-      this.items = [...this.items];
+      this.items = this.items.map(i => this.deepClone(i));
     }
   }
 
@@ -66,6 +72,7 @@ export class PuestoManagerPopupComponent implements OnInit {
     this.loading = false;
     if (!res.error) {
       this.items.splice(idx, 1);
+      this.catalog.setPuestos(this.deepClone(this.items));
       this.alert.emit({ type: 'success', message: 'Puesto eliminado.' });
     } else {
       this.alert.emit({ type: 'error', message: res.error?.message ?? 'Error eliminando puesto' });
@@ -78,7 +85,8 @@ export class PuestoManagerPopupComponent implements OnInit {
     const res = await this.userService.crearPuesto({ nombre: this.newName.trim() });
     this.loading = false;
     if (!res.error && res.data) {
-      this.items.push(res.data);
+      this.items.push(this.deepClone(res.data));
+      this.catalog.setPuestos(this.deepClone(this.items));
       this.newName = '';
       this.alert.emit({ type: 'success', message: 'Puesto creado.' });
     } else {
@@ -87,7 +95,8 @@ export class PuestoManagerPopupComponent implements OnInit {
   }
 
   onSaveAll(): void {
-    this.saved.emit(this.items);
+    this.saved.emit(this.deepClone(this.items));
+    this.catalog.setPuestos(this.deepClone(this.items));
   }
 
   onCancel(): void {

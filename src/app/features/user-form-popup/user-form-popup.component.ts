@@ -1,13 +1,14 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, OnDestroy, Output, SimpleChanges } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UsuarioVM, UsuarioRequest, toRequest } from 'src/app/core/services/user.mapper.service';
 import { UserService } from 'src/app/core/services/user.service';
+import { CatalogService } from 'src/app/core/services/catalog.service';
 import { PuestoDeTrabajo } from 'src/app/core/models/puestodetrabajo.model';
 import { Genero } from 'src/app/core/models/genero.model';
 import { Direccion } from 'src/app/core/models/direccion.model';
-import { GeneroManagerPopupComponent } from '../genero-manager-popup/genero-manager-popup.component';
-import { PuestoManagerPopupComponent } from '../puesto-manager-popup/puesto-manager-popup.component';
+// popup managers are opened from header now
 
 // Interfaz interna para las direcciones en el formulario (camelCase para el UI)
 export interface DireccionRow {
@@ -24,11 +25,13 @@ export interface DireccionRow {
   templateUrl: './user-form-popup.component.html',
   styleUrls: ['./user-form-popup.component.css', '../shared/form-controls.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, GeneroManagerPopupComponent, PuestoManagerPopupComponent]
+  imports: [CommonModule, FormsModule]
 })
-export class UserFormPopupComponent implements OnInit, OnChanges {
+export class UserFormPopupComponent implements OnInit, OnChanges, OnDestroy {
 
-  constructor(private userService: UserService) {}
+  private subs: Subscription[] = [];
+
+  constructor(private userService: UserService, private catalog: CatalogService) {}
 
   generos: Genero[] = [];
   puestosDeTrabajo: PuestoDeTrabajo[] = [];
@@ -47,10 +50,7 @@ export class UserFormPopupComponent implements OnInit, OnChanges {
   // Modelo interno del formulario
   model: Partial<UsuarioVM> = {};
 
-  // popup states
-  isGeneroManagerOpen = false;
-  isPuestoManagerOpen = false;
-  // alert state surfaced from child managers
+  // alert state surfaced from managers (now opened from header)
   alertMessage: string | null = null;
   alertType: 'error' | 'success' | null = null;
 
@@ -77,6 +77,13 @@ export class UserFormPopupComponent implements OnInit, OnChanges {
 
   async ngOnInit(): Promise<void> {
     await this.loadCombos();
+    // subscribe to catalog changes so selects update live
+    this.subs.push(this.catalog.generos$().subscribe(g => { this.generos = g; }));
+    this.subs.push(this.catalog.puestos$().subscribe(p => { this.puestosDeTrabajo = p; }));
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe());
   }
 
   private async loadCombos(): Promise<void> {
@@ -86,6 +93,9 @@ export class UserFormPopupComponent implements OnInit, OnChanges {
     ]);
     this.generos = generoResponse.data ?? [];
     this.puestosDeTrabajo = puestoResponse.data ?? [];
+    // publish initial values so other components can subscribe
+    this.catalog.setGeneros(this.generos);
+    this.catalog.setPuestos(this.puestosDeTrabajo);
   }
 
   // Helper para la comparación en ngModel con objetos
@@ -155,30 +165,7 @@ export class UserFormPopupComponent implements OnInit, OnChanges {
     }
   }
 
-  openGeneroManager(): void {
-    this.isGeneroManagerOpen = true;
-  }
-
-  async onGenerosUpdated(newList: Genero[]): Promise<void> {
-    this.generos = [...newList];
-    this.isGeneroManagerOpen = false;
-    // if model has no genero, select the last created one
-    if (!this.model.genero && this.generos.length) {
-      this.model.genero = this.generos[this.generos.length - 1];
-    }
-  }
-
-  openPuestoManager(): void {
-    this.isPuestoManagerOpen = true;
-  }
-
-  async onPuestosUpdated(newList: PuestoDeTrabajo[]): Promise<void> {
-    this.puestosDeTrabajo = [...newList];
-    this.isPuestoManagerOpen = false;
-    if (!this.model.puestoTrabajo && this.puestosDeTrabajo.length) {
-      this.model.puestoTrabajo = this.puestosDeTrabajo[this.puestosDeTrabajo.length - 1];
-    }
-  }
+  // managers are opened from header; form will reload combos on init when needed
 
   onAddAddress(): void {
     const newRow: DireccionRow = {

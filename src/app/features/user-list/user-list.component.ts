@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { UsuarioVM, UsuarioRequest, toViewModel } from 'src/app/core/services/user.mapper.service';
 import { UserService } from 'src/app/core/services/user.service';
+import { CatalogService } from 'src/app/core/services/catalog.service';
 import { FormsModule } from '@angular/forms';
 import { UserFormPopupComponent } from '../user-form-popup/user-form-popup.component';
 import { DeleteConfirmPopupComponent } from '../delete-confirm-popup/delete-confirm-popup.component';
@@ -26,8 +28,10 @@ export class UserListComponent implements OnInit {
   users: UsuarioVM[] = [];
   selectedUserId: number | null = null;
 
-  constructor(private router: Router, private userService: UserService) {
+  constructor(private router: Router, private userService: UserService, private catalog: CatalogService) {
   }
+
+  private subs: Subscription[] = [];
 
   get selectedUser(): UsuarioVM | undefined {
     return this.users.find(u => u.id === this.selectedUserId);
@@ -45,6 +49,14 @@ export class UserListComponent implements OnInit {
 
   ngOnInit(): void {
     this.refreshUsers();
+    // refresh users when generos or puestos change
+    // so edits in managers are reflected immediately
+    this.subs.push(this.catalog.generos$().subscribe(() => this.refreshUsers()));
+    this.subs.push(this.catalog.puestos$().subscribe(() => this.refreshUsers()));
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe());
   }
 
   launchCreatePopup(): void {

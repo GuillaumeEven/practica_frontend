@@ -9,6 +9,7 @@ Este directorio contiene la documentación técnica y guías para el proyecto An
 3. [Peticiones HTTP en Angular](./requests.md)
 4. [Patrón Smart/Dumb Components](./smartDumb.md)
 5. [Consejos y tips de TypeScript](./ts-tips.md)
+6. [Catalog service (generos / puestos) — reactive updates](./catalog.md)
 
 ---
 

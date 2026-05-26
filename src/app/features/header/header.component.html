@@ -1,3 +1,22 @@
 <header class="app-header">
-  <button class="logout-btn" (click)="logout()">Logout</button>
+  <div class="header-left">
+    <button class="nav-btn" (click)="openGeneros()">Géneros</button>
+    <button class="nav-btn" (click)="openPuestos()">Puestos</button>
+  </div>
+  <div class="header-right">
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </div>
+
+  <!-- Popups triggered from header -->
+  <app-genero-manager-popup *ngIf="isGeneroManagerOpen"
+                           (saved)="closeGeneros()"
+                           (cancelled)="closeGeneros()"
+                           (alert)="onChildAlert($event)">
+  </app-genero-manager-popup>
+
+  <app-puesto-manager-popup *ngIf="isPuestoManagerOpen"
+                          (saved)="closePuestos()"
+                          (cancelled)="closePuestos()"
+                          (alert)="onChildAlert($event)">
+  </app-puesto-manager-popup>
 </header>
