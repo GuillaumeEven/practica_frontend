@@ -65,3 +65,16 @@
   .header-center { gap: 6px; }
   .header-username { display: none; }
 }
+
+.header-notification {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 1200;
+}
+.header-notification.error { background: #b00020; color: #fff; }
+.header-notification.success { background: #1b5e20; color: #fff; }
