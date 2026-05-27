@@ -4,7 +4,8 @@ import { Usuario } from '../models/user.model';
 import { UsuarioRequest } from './user.mapper.service';
 import { firstValueFrom } from 'rxjs';
 import ConstUrls from 'src/app/shared/contants/const-urls';
-import { extractApiErrorMessage, loadCredentials, obtenerUsuarioLogado } from './utils.service';
+import { extractApiErrorMessage, loadCredentials, obtenerUsuarioLogado, guardarUsuarioLogado } from './utils.service';
+import { ImagenService } from './imagen.service';
 import { LoginService } from './login.service';
 
 
@@ -16,7 +17,35 @@ export class UserService {
   apiUrl = ConstUrls.API_URL;
 
 
-  constructor(private http: HttpClient, private loginService: LoginService) {}
+  constructor(private http: HttpClient, private loginService: LoginService, private imagenService: ImagenService) {}
+
+  /**
+   * Fetch the image record for the currently logged user (if any).
+   * Returns { error, data? } where data is the ImagenDTO from the API.
+   */
+  async obtenerImagenUsuarioLogado(): Promise<{ error:any, data?: any }> {
+    try {
+      let u = obtenerUsuarioLogado();
+      if (!u) return { error: null, data: null };
+
+      // If localStorage lacks imagen_id, try refreshing the user from the API
+      if (!(u as any).imagen_id && u.id) {
+        const fresh = await this.obtenerUsuarioPorId(u.id);
+        if (!fresh.error && fresh.data) {
+          u = fresh.data as any;
+          // persist refreshed user so storage reflects server state
+          try { guardarUsuarioLogado(u as any); } catch(_) {}
+        }
+      }
+
+      if (!(u as any).imagen_id) return { error: null, data: null };
+      const id = (u as any).imagen_id;
+      const res = await this.imagenService.obtenerImagen(id);
+      return res;
+    } catch (err:any) {
+      return { error: { raw: err, message: extractApiErrorMessage(err) } };
+    }
+  }
 
   async obtenerUsuarioPorId(id: number): Promise<{ error: any, data?: Usuario }> {
     try {
@@ -41,7 +70,6 @@ export class UserService {
   async actualizarUsuario(id: number, user: UsuarioRequest): Promise<{ error: any, data?: Usuario }> {
     try {
       const params = loadCredentials();
-      console.log('Updating user with ID:', id, 'Data:', user);
       const updated = await firstValueFrom(
         this.http.put<Usuario>(
           `${this.apiUrl}/usuarios/${id}`,
@@ -49,6 +77,15 @@ export class UserService {
           { params }
         )
       );
+      // If the updated user is the currently logged user, persist the fresh data to localStorage
+      try {
+        const logged = obtenerUsuarioLogado();
+        if (logged && logged.id === updated.id) {
+          guardarUsuarioLogado(updated);
+        }
+      } catch (_) {
+        // non-fatal
+      }
       return { error: null, data: updated };
     } catch (err:any) {
       return { error: { raw: err, message: extractApiErrorMessage(err) }, data: undefined };

@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { UsuarioVM, UsuarioRequest, toRequest } from 'src/app/core/services/user.mapper.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { CatalogService } from 'src/app/core/services/catalog.service';
+import { ImagenService } from 'src/app/core/services/imagen.service';
 import { PuestoDeTrabajo } from 'src/app/core/models/puestodetrabajo.model';
 import { Genero } from 'src/app/core/models/genero.model';
 import { Direccion } from 'src/app/core/models/direccion.model';
@@ -31,7 +32,7 @@ export class UserFormPopupComponent implements OnInit, OnChanges, OnDestroy {
 
   private subs: Subscription[] = [];
 
-  constructor(private userService: UserService, private catalog: CatalogService) {}
+  constructor(private userService: UserService, private catalog: CatalogService, private imagenService: ImagenService) {}
 
   generos: Genero[] = [];
   puestosDeTrabajo: PuestoDeTrabajo[] = [];
@@ -49,6 +50,7 @@ export class UserFormPopupComponent implements OnInit, OnChanges, OnDestroy {
 
   // Modelo interno del formulario
   model: Partial<UsuarioVM> = {};
+  imagenPreviewDataUrl: string | null = null;
 
   // alert state surfaced from managers (now opened from header)
   alertMessage: string | null = null;
@@ -62,7 +64,7 @@ export class UserFormPopupComponent implements OnInit, OnChanges, OnDestroy {
   onChildAlert(event: { type: 'error' | 'success', message: string }): void {
     this.alertType = event.type;
     this.alertMessage = event.message;
-    console.log('[user-form-popup] child alert', event);
+    // alert surfaced to user; no console logging
     // auto-clear after 5 seconds
     setTimeout(() => this.clearAlert(), 5000);
   }
@@ -106,6 +108,13 @@ export class UserFormPopupComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['user'] || changes['mode']) {
       this.initModel();
+    }
+    // cargar preview de imagen si está presente
+    const imgId = (this.model as any).imagenId;
+    if (imgId) {
+      this.loadImagenPreview(imgId as number);
+    } else {
+      this.imagenPreviewDataUrl = null;
     }
   }
 
@@ -212,7 +221,50 @@ export class UserFormPopupComponent implements OnInit, OnChanges, OnDestroy {
         direccion_principal: row.direccionPrincipal
       } as any))
     };
-    this.saved.emit(toRequest(vm));
+    const payload = toRequest(vm);
+    this.saved.emit(payload);
+  }
+
+  private async loadImagenPreview(id: number): Promise<void> {
+    try {
+      const r = await this.imagenService.obtenerImagen(id);
+      if (!r.error && r.data) {
+        const img = r.data;
+        this.imagenPreviewDataUrl = `data:${img.mime_type || 'image/png'};base64,${img.imagen}`;
+      } else {
+        this.imagenPreviewDataUrl = null;
+      }
+    } catch (_) {
+      this.imagenPreviewDataUrl = null;
+    }
+  }
+
+  async onProfileImagePick(ev: Event): Promise<void> {
+    const input = ev.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+    const file = input.files[0];
+    try {
+      const base64 = await this.readFileAsBase64(file);
+      const stripped = base64.replace(/^data:[^;]+;base64,/, '');
+      const res = await this.imagenService.crearImagen(stripped, this.model.id as any);
+      if (!res.error && res.data) {
+        const created = res.data;
+        (this.model as any).imagenId = created.id;
+        this.imagenPreviewDataUrl = `data:${created.mime_type || 'image/png'};base64,${created.imagen}`;
+      }
+    } catch (_) {
+    } finally {
+      input.value = '';
+    }
+  }
+
+  private readFileAsBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = () => resolve(String(fr.result));
+      fr.onerror = (err) => reject(err);
+      fr.readAsDataURL(file);
+    });
   }
 
   onCancel(): void {

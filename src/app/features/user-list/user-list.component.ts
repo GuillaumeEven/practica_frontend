@@ -42,8 +42,16 @@ export class UserListComponent implements OnInit {
     if (result.error) {
       alert('Error al obtener usuarios: ' + result.error.message);
     } else {
+      const prevSelected = this.selectedUserId;
       this.users = (result.data ?? []).map(u => toViewModel(u));
-      this.selectedUserId = this.users.length > 0 ? this.users[0].id ?? null : null;
+      if (prevSelected === null) {
+        // initial load: select first user if any
+        this.selectedUserId = this.users.length > 0 ? this.users[0].id ?? null : null;
+      } else {
+        // preserve selection when possible; otherwise fallback to first
+        const stillExists = this.users.some(u => u.id === prevSelected);
+        this.selectedUserId = stillExists ? prevSelected : (this.users.length > 0 ? this.users[0].id ?? null : null);
+      }
     }
   }
 
@@ -77,9 +85,20 @@ export class UserListComponent implements OnInit {
     const res = this.formPopupMode === 'create'
       ? await this.userService.crearUsuario(user)
       : await this.userService.actualizarUsuario(this.selectedUserId!, user);
+
     if (res.error) {
       alert('Error: ' + (res.error?.message ?? res.error));
       return;
+    }
+    // If the updated/created user is the logged user, broadcast event so header can refresh
+    try {
+      const loggedRaw = localStorage.getItem('usuarioLogado');
+      const logged = loggedRaw ? JSON.parse(loggedRaw) : null;
+      if (res.data && logged && res.data.id === logged.id) {
+        window.dispatchEvent(new CustomEvent('usuarioActualizado', { detail: res.data }));
+      }
+    } catch (_) {
+      // ignore
     }
     await this.refreshUsers();
     this.formPopupMode = 'closed';

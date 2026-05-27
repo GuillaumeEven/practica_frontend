@@ -6,6 +6,29 @@
   margin-bottom: 16px;
 }
 
+/* Dialog positioning and scroll behaviour */
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 999;
+}
+
+.dialog-box {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(920px, 96%);
+  max-height: 80vh;
+  overflow-y: auto;
+  background: #fff;
+  padding: 18px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  z-index: 1000;
+}
+
 .form-field {
   display: flex;
   flex-direction: column;
@@ -118,3 +141,35 @@
 
 /* Minimal reset for default button focus in some browsers */
 .icon-btn::-moz-focus-inner { border: 0; }
+
+.image-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.profile-preview {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #ccc;
+}
+
+/* Make inline SVG look like profile image */
+.profile-preview.empty-avatar {
+  display: block;
+  box-sizing: border-box;
+  background: transparent;
+}
+.profile-preview.empty-avatar circle,
+.profile-preview.empty-avatar path {
+  stroke: #666;
+  stroke-width: 1.2;
+  fill: none;
+}
+
+.image-actions button {
+  padding: 6px 10px;
+}

@@ -23,6 +23,7 @@ export interface UsuarioVM {
   puestoTrabajo?: PuestoDeTrabajo | null;
   admin?: boolean | null;
   direcciones?: Direccion[] | null;
+  imagenId?: number | null;
 
   // computed / helper fields for UI
   age?: number | null;
@@ -121,6 +122,7 @@ export function toViewModel(u: Usuario): UsuarioVM {
     puestoTrabajo: u.puesto_trabajo ?? null,
     admin: u.admin ?? false,
     direcciones: u.direcciones ?? null,
+    imagenId: (u as any).imagen_id ?? null,
 
     // computed
     age: calculateAge(u.fecha_nacimiento),
@@ -154,6 +156,7 @@ export interface UsuarioRequest {
     direccion_principal: boolean;
     usuario_id?: number | null;
   }[];
+  imagen_id?: number | null;
 }
 
 /**
@@ -179,6 +182,8 @@ export function toRequest(vm: UsuarioVM): UsuarioRequest {
       direccion_principal: d?.direccion_principal ?? false,
       usuario_id: vm.id ?? null
     }))
+    ,
+    imagen_id: vm.imagenId ?? null
   };
 }
 

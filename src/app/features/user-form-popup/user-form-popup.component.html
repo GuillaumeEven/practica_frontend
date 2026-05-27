@@ -10,7 +10,22 @@
         <button type="button" class="icon-btn" aria-label="Close alert" (click)="clearAlert()">✖</button>
     </div>
 
-  <form #f="ngForm" (ngSubmit)="onSave()">
+    <form #f="ngForm" (ngSubmit)="onSave()">
+                <div *ngIf="mode === 'update' && model.id" class="image-profile-row">
+                        <ng-container *ngIf="imagenPreviewDataUrl; else defaultAvatar">
+                            <img [src]="imagenPreviewDataUrl" alt="preview" class="profile-preview" />
+                        </ng-container>
+                        <ng-template #defaultAvatar>
+                            <svg class="profile-preview empty-avatar" viewBox="0 0 24 24" role="img" aria-label="Default user avatar">
+                                <circle cx="12" cy="8" r="4" fill="none" stroke="rgba(0,0,0,0.6)" stroke-width="1" />
+                                <path d="M4 20c1.5-4 6-6 8-6s6.5 2 8 6" fill="none" stroke="rgba(0,0,0,0.6)" stroke-width="1" stroke-linecap="round"/>
+                            </svg>
+                        </ng-template>
+                        <div class="image-actions">
+                                <input #fileInput type="file" accept="image/*" style="display:none" (change)="onProfileImagePick($event)" />
+                                <button type="button" (click)="fileInput.click()">Profile Image</button>
+                        </div>
+                </div>
     <div class="form-grid">
 
     <!-- Solo lectura -->
