@@ -27,6 +27,8 @@ export class HeaderComponent implements OnInit {
   isPuestoManagerOpen = false;
   avatarDataUrl: string | null = null;
   displayName: string | null = '';
+  // simple in-header notification for child popups
+  notification: { type: 'error' | 'success', message: string } | null = null;
 
   openGeneros(): void {
     this.isGeneroManagerOpen = true;
@@ -45,7 +47,10 @@ export class HeaderComponent implements OnInit {
   }
 
   onChildAlert(event: { type: 'error' | 'success', message: string }): void {
-    // header could surface global alerts later (no console logging)
+    // show a simple temporary in-header notification
+    this.notification = { type: event.type, message: event.message };
+    // auto-hide after 4 seconds
+    setTimeout(() => { this.notification = null; }, 4000);
   }
 
   logout(): void {

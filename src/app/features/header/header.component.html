@@ -23,6 +23,11 @@
     <button class="logout-btn" (click)="logout()">Logout</button>
   </div>
 
+  <!-- Notification area for child popups -->
+  <div *ngIf="notification" class="header-notification" [class.error]="notification.type === 'error'" [class.success]="notification.type === 'success'" role="status" aria-live="polite">
+    {{ notification.message }}
+  </div>
+
   <!-- Popups triggered from header -->
   <app-genero-manager-popup *ngIf="isGeneroManagerOpen"
                            (saved)="closeGeneros()"
