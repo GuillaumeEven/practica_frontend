@@ -11,4 +11,4 @@ bootstrapApplication(AppComponent, {
         provideRouter(routes),
         importProvidersFrom(FormsModule, HttpClientModule)
     ]
-}).catch(err => console.error("Error al arrancar Angular:", err));
+}).catch(() => {});

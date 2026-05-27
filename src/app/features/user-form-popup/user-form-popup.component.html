@@ -4,7 +4,28 @@
     <h2>{{ title }}</h2>
   </div>
 
-  <form #f="ngForm" (ngSubmit)="onSave()">
+    <!-- Alert area -->
+    <div *ngIf="alertMessage" class="alert" [ngClass]="{'alert--error': alertType==='error', 'alert--success': alertType==='success'}">
+        <span>{{ alertMessage }}</span>
+        <button type="button" class="icon-btn" aria-label="Close alert" (click)="clearAlert()">✖</button>
+    </div>
+
+    <form #f="ngForm" (ngSubmit)="onSave()">
+                <div *ngIf="mode === 'update' && model.id" class="image-profile-row">
+                        <ng-container *ngIf="imagenPreviewDataUrl; else defaultAvatar">
+                            <img [src]="imagenPreviewDataUrl" alt="preview" class="profile-preview" />
+                        </ng-container>
+                        <ng-template #defaultAvatar>
+                            <svg class="profile-preview empty-avatar" viewBox="0 0 24 24" role="img" aria-label="Default user avatar">
+                                <circle cx="12" cy="8" r="4" fill="none" stroke="rgba(0,0,0,0.6)" stroke-width="1" />
+                                <path d="M4 20c1.5-4 6-6 8-6s6.5 2 8 6" fill="none" stroke="rgba(0,0,0,0.6)" stroke-width="1" stroke-linecap="round"/>
+                            </svg>
+                        </ng-template>
+                        <div class="image-actions">
+                                <input #fileInput type="file" accept="image/*" style="display:none" (change)="onProfileImagePick($event)" />
+                                <button type="button" (click)="fileInput.click()">Profile Image</button>
+                        </div>
+                </div>
     <div class="form-grid">
 
     <!-- Solo lectura -->
@@ -51,19 +72,25 @@
 
     <label class="form-field">
         <span>Gender</span>
-        <select name="genero" [(ngModel)]="model.genero" [compareWith]="compareById">
-            <option [ngValue]="null">-- Select --</option>
-            <option *ngFor="let g of generos" [ngValue]="g">{{ g.nombre }}</option>
-        </select>
+        <div class="field-with-action">
+          <select name="genero" [(ngModel)]="model.genero" [compareWith]="compareById">
+              <option [ngValue]="null">-- Select --</option>
+              <option *ngFor="let g of generos" [ngValue]="g">{{ g.nombre }}</option>
+          </select>
+        </div>
     </label>
 
     <label class="form-field">
         <span>Job Position</span>
-        <select name="puestoTrabajo" [(ngModel)]="model.puestoTrabajo" [compareWith]="compareById">
-            <option [ngValue]="null">-- Select --</option>
-            <option *ngFor="let p of puestosDeTrabajo" [ngValue]="p">{{ p.nombre }}</option>
-        </select>
+        <div class="field-with-action">
+          <select name="puestoTrabajo" [(ngModel)]="model.puestoTrabajo" [compareWith]="compareById">
+              <option [ngValue]="null">-- Select --</option>
+              <option *ngFor="let p of puestosDeTrabajo" [ngValue]="p">{{ p.nombre }}</option>
+          </select>
+        </div>
     </label>
+
+    <!-- popups are opened from the header; managers removed from inline form -->
 
     <label class="form-field form-field--checkbox">
         <span>Admin</span>

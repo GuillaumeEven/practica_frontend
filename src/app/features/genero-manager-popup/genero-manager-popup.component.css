@@ -1,0 +1,21 @@
+:host {
+  display: block;
+}
+.popup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 70vh;
+  overflow: auto;
+  padding: 12px 0;
+}
+header h2 { margin: 0 0 4px 0; }
+section ul { list-style: none; padding: 0; margin: 0; }
+section ul li { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+.item-label { flex: 1 1 auto; }
+.item-actions { display: flex; gap: 6px; }
+.row-icon-btn { background: transparent; border: none; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: #333; border-radius: 4px; }
+.row-icon-btn:hover { background: rgba(0,0,0,0.04); }
+.new-item { display: flex; gap: 8px; align-items: center; }
+footer { margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px; }
+footer button { min-width: 96px; }

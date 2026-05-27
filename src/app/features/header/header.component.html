@@ -1,3 +1,38 @@
 <header class="app-header">
-  <button class="logout-btn" (click)="logout()">Logout</button>
+  <div class="header-left">
+    <div class="avatar-wrap">
+      <ng-container *ngIf="avatarDataUrl; else emptyAvatar">
+        <img [src]="avatarDataUrl" alt="avatar" class="avatar" />
+      </ng-container>
+      <ng-template #emptyAvatar>
+        <svg class="avatar empty-avatar" viewBox="0 0 24 24" role="img" aria-label="Default user avatar">
+          <circle cx="12" cy="8" r="4" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1" />
+          <path d="M4 20c1.5-4 6-6 8-6s6.5 2 8 6" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1" stroke-linecap="round"/>
+        </svg>
+      </ng-template>
+      <span class="header-username">{{ displayName }}</span>
+    </div>
+  </div>
+
+  <div class="header-center">
+    <button class="nav-btn" (click)="openGeneros()">Géneros</button>
+    <button class="nav-btn" (click)="openPuestos()">Puestos</button>
+  </div>
+
+  <div class="header-right">
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </div>
+
+  <!-- Popups triggered from header -->
+  <app-genero-manager-popup *ngIf="isGeneroManagerOpen"
+                           (saved)="closeGeneros()"
+                           (cancelled)="closeGeneros()"
+                           (alert)="onChildAlert($event)">
+  </app-genero-manager-popup>
+
+  <app-puesto-manager-popup *ngIf="isPuestoManagerOpen"
+                          (saved)="closePuestos()"
+                          (cancelled)="closePuestos()"
+                          (alert)="onChildAlert($event)">
+  </app-puesto-manager-popup>
 </header>

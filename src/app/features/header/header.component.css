@@ -3,15 +3,65 @@
     color: #fff;
     padding: 10px 20px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
+}
+
+.header-left,
+.header-center,
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.header-center {
+    flex: 1;
+    justify-content: center;
+    gap: 12px;
 }
 
 .logout-btn {
     background-color: transparent;
-    color: grey;
+    color: #fff;
     border: none;
-    padding: 8px 16px;
+    padding: 8px 12px;
     border-radius: 4px;
     cursor: pointer;
+}
+
+.avatar-wrap {
+    display: inline-flex;
+    align-items: center;
+}
+
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.12);
+    display: block;
+}
+
+/* SVG-specific tweaks to make it look like the image avatar */
+.avatar.empty-avatar {
+    background: transparent;
+}
+.avatar.empty-avatar circle,
+.avatar.empty-avatar path {
+    stroke: rgba(255,255,255,0.9);
+    fill: none;
+}
+
+.header-username {
+    margin-left: 8px;
+    color: #fff;
+    font-weight: 500;
+}
+
+/* small screens: reduce gaps */
+@media (max-width: 520px) {
+  .header-center { gap: 6px; }
+  .header-username { display: none; }
 }
